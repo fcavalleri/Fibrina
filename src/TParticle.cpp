@@ -9,6 +9,10 @@ is_freeR=true;
 is_activeA=true;
 is_activeB=true;
 mob=MobState::FREE;
+LinkedWith[0]=-1;
+LinkedWith[1]=-1;
+LinkedWith[2]=-1;
+LinkedWith[3]=-1;
 }
 
 /*TParticle::TParticle(const TParticle & o) {
@@ -24,17 +28,17 @@ is_activeB=o.is_activeB;
 mob=o.mob;
 };*/
 
-TParticle::TParticle(TSite pSite, int pSpin, int pIndex):Index(pIndex)
+/*TParticle::TParticle(TSite pSite, int pSpin, int pIndex):Index(pIndex)
 {
 CSite=pSite;
 Spin=pSpin;
 RecalcExtSites();
 is_freeL=true;
 is_freeR=true;
-is_activeA=true;
-is_activeB=true;
+is_activeA=false;
+is_activeB=false;
 mob=MobState::FREE;
-}
+}*/
 
 TParticle::~TParticle()
 {
@@ -80,29 +84,14 @@ void TParticle::Evolve()
         break;
         }
 
-        case MobState::YLA:
+        case MobState::LINKED:
         {
-            ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
+            CheckClose();
         break;
         }
 
-        case MobState::YLB:
-        {
-            ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
-        break;
-        }
-
-        case MobState::YLR:
-        {
-            ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
-        break;
-        }
-
-        case MobState::YLL:
-        {
-            ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
-            break;
-        }
+        case MobState::BLOCKED:
+        {}
     }
 }
 
@@ -182,16 +171,16 @@ if (other.mob==MobState::FREE) return;
             LinkedWith[2]=other.Index; other.LinkedWith[3]=Index;
             LinkedWith[3]=other.Index; other.LinkedWith[2]=Index;
             is_activeA=false; is_freeR=false; other.is_freeR=false; other.is_activeA=false;
-            //std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
+            std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
             //Lattice->RandomFill(1);
             return;
         }
         //YL at my A
         if (other.Spin==(Spin+4)%6 && is_activeA && other.is_freeR){
-            mob=MobState::YLA; other.mob=MobState::BLOCKED;
+            mob=MobState::LINKED; other.mob=MobState::BLOCKED;
             LinkedWith[2]=other.Index; other.LinkedWith[3]=Index;
             is_activeA=false; other.is_freeR=false;
-            //std::cout << "YL at his A of " << *this << " with " << other << std::endl;
+            std::cout << "YL at his A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
             return;
         }
@@ -204,16 +193,16 @@ if (other.mob==MobState::FREE) return;
             LinkedWith[0]=other.Index; other.LinkedWith[1]=Index;
             LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
             is_activeB=false; is_freeL=false; other.is_freeL=false; other.is_activeB=false;
-            //std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
+            std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
             //Lattice->RandomFill(1);
             return;
         }
         //YL at my B
         if (other.Spin==(Spin+2)%6 && is_activeB && other.is_freeL){
-            mob=MobState::YLB; other.mob=MobState::BLOCKED;
+            mob=MobState::LINKED; other.mob=MobState::BLOCKED;
             LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
             is_activeB=false; other.is_freeL=false;
-            //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
+            std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
             return;
         }
@@ -228,10 +217,10 @@ if (other.mob==MobState::FREE) return;
     if (RSite==other.CSite){
         //YL at other A
         if (other.Spin==(Spin+2)%6 && is_freeR && other.is_activeA){
-            mob=MobState::YLR; other.mob=MobState::BLOCKED;
+            mob=MobState::LINKED; other.mob=MobState::BLOCKED;
             LinkedWith[3]=other.Index; other.LinkedWith[2]=Index;
             is_freeR=false; other.is_activeA=false;
-            //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
+            std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
         }
     }
@@ -243,15 +232,22 @@ void TParticle::CheckJoinWithLSite(TParticle &other)
 if (other.mob==MobState::FREE) return;
 
         if (LSite==other.CSite){
-        //YL at other B
+        //YLL (at other B)
         if (other.Spin==(Spin+4)%6 && is_freeL && other.is_activeB){
-            mob=MobState::YLL; other.mob=MobState::BLOCKED;
+            mob=MobState::LINKED; other.mob=MobState::BLOCKED;
             LinkedWith[0]=other.Index; other.LinkedWith[1]=Index;
             is_freeL=false; other.is_activeB=false;
-            //std::cout << "YL at other B of " << *this << " with " << other << std::endl;
+            std::cout << "YL at other B of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
         }
     }
+}
+
+void TParticle::CheckClose() {
+    if (LinkedWith[0]!=-1) {ChekCloseYLL(Lattice->GetParticle(LinkedWith[0])); return;}
+    if (LinkedWith[1]!=-1) {ChekCloseYLB(Lattice->GetParticle(LinkedWith[1])); return;}
+    if (LinkedWith[2]!=-1) {ChekCloseYLA(Lattice->GetParticle(LinkedWith[2])); return;}
+    if (LinkedWith[3]!=-1) {ChekCloseYLR(Lattice->GetParticle(LinkedWith[3])); return;}
 }
 
 void TParticle::ChekCloseYLA(TParticle &other)
@@ -263,11 +259,12 @@ void TParticle::ChekCloseYLA(TParticle &other)
 
     mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
     Spin=(Spin+1)%6; RecalcExtSites();
+    LinkedWith[3]=other.Index; other.LinkedWith[2]=Index;
     is_freeR=false; other.is_activeA=false;
 
     SetParticlePosition();
 
-    //std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 
 }
 
@@ -280,11 +277,12 @@ void TParticle::ChekCloseYLB(TParticle &other)
 
     mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
     Spin=(Spin-1)%6; RecalcExtSites();
+    LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
     is_freeL=false; other.is_activeB=false;
 
     SetParticlePosition();
 
-    //std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 
 }
 
@@ -297,11 +295,12 @@ void TParticle::ChekCloseYLR(TParticle &other)
 
     mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
     CSite=other.RSite; Spin=(Spin-1)%6; RecalcExtSites();
+    LinkedWith[2]=other.Index; other.LinkedWith[3]=Index;
     is_activeA=false; other.is_freeR=false;
 
     SetParticlePosition();
 
-    //std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 
 }
 
@@ -314,11 +313,12 @@ void TParticle::ChekCloseYLL(TParticle &other)
 
     mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
     CSite=other.LSite; Spin=(Spin+1)%6; RecalcExtSites();
+    LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
     is_activeB=false; other.is_freeL=false;
 
     SetParticlePosition();
 
-    //std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 
 }
 
@@ -343,10 +343,7 @@ std::ostream& operator <<(std::ostream& os, const TParticle::MobState& me)
 switch (me)
     {
     case TParticle::MobState::FREE: return os << "Free";
-    case TParticle::MobState::YLA : return os << "YLA";
-    case TParticle::MobState::YLB : return os << "YLB";
-    case TParticle::MobState::YLR : return os << "YLoA";
-    case TParticle::MobState::YLL : return os << "YLoB";
+    case TParticle::MobState::LINKED : return os << "YLA";
     case TParticle::MobState::BLOCKED: return os << "Blocked";
     }
 }
@@ -354,6 +351,6 @@ switch (me)
 std::ostream& operator <<(std::ostream& os, const TParticle& me)
 {
 os << "Particle " << me.Index << " CS:" << me.CSite <<  " LS:" << me.LSite << " RS:" << me.RSite;
-os << " Spin:" << me.Spin << " Bools L-a-b-R: " << me.is_freeL << me.is_activeA << me.is_activeB << me.is_freeR << " " << me.mob;
+os << " Spin:" << me.Spin << me.mob << " Parts Linked in L-B-A-R: " << me.LinkedWith[0] << me.LinkedWith[1] << me.LinkedWith[2] << me.LinkedWith[3] << " ";
 return os;
-}  //passo l'indirizzo ma non può modificare la variabile (const)
+}

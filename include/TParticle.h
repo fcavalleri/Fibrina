@@ -47,7 +47,7 @@ class TParticle
         bool is_activeA;
         bool is_activeB;
         //! State of the monomer
-        enum class MobState {FREE, YLL, YLB, YLA, YLR, BLOCKED};
+        enum class MobState {FREE, LINKED, BLOCKED};
         MobState mob;
         //! Index of the particle with I am linked
         int LinkedWith[4];
@@ -95,6 +95,7 @@ class TParticle
         void CheckJoinWithRSite(TParticle &pPart);
 
         //! If it's possible a closure over the input particle, occurs
+        void CheckClose();
         void ChekCloseYLA(TParticle &pPart);
         void ChekCloseYLB(TParticle &pPart);
         void ChekCloseYLR(TParticle &pPart);

@@ -29,7 +29,7 @@ int main() {
 
     const int T_MAX = 500000;
     const int MSEC_WAIT = 0;
-    const int VIEW = 3000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+    const int VIEW = 2000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
     const double ZY_ROT_RATE = 1;
     const double X_ROT_RATE = 0.66;
