@@ -1,3 +1,1 @@
-//My project modified!
-1=1 se 2=2 ;)
-ciaoooo
+This project is about a simulation of the aggregation of fibrine.
