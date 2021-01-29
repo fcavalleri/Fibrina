@@ -86,8 +86,7 @@ class TParticle
         void FreeMove();
 
         //! Try to activate central sites A & B;
-        void TryActivateA();
-        void TryActivateB();
+        void TryActivateAB();
 
         //! If it's possible an aggregation with the input particle, occurs
         void CheckJoinWithCSite(TParticle &pPart);
