@@ -52,10 +52,6 @@ void TLattice::SetForDLA() {
     Parts[N - 1].SetParticlePosition();
 }
 
-void TLattice::SetGraphicContext(sf::RenderWindow *pApp) {
-    app = pApp;
-}
-
 void TLattice::Evolve() {
     //For N times, chose a random particle from Parts vector and Evolve it
     for (int i = 0; i < N; i++) {

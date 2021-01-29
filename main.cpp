@@ -10,7 +10,7 @@
 #include <vector>
 #include <iostream>
 
-void DrawParticle(TParticle &i, sf::RenderWindow *app) {
+/*void DrawParticle(TParticle &i, sf::RenderWindow *app) {
     sf::Vertex monomeroC = sf::Vertex(sf::Vector2f(i.CSite.x, i.CSite.y), sf::Color::Red);
     app->draw(&monomeroC, 1, sf::Points);
 
@@ -19,7 +19,7 @@ void DrawParticle(TParticle &i, sf::RenderWindow *app) {
 
     sf::Vertex monomeroD = sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y), sf::Color::White);
     app->draw(&monomeroD, 1, sf::Points);
-}
+}*/
 
 int main() {
 
@@ -53,9 +53,6 @@ int main() {
 // Set Particle's Activation and Closing Treshold
     TParticle::ACT_TRESH = ACT_TRESH;
     TParticle::CLO_TRESH = CLO_TRESH;
-
-// Set the graphic context
-    Lattice.SetGraphicContext(&app);
 
 // Fill the Lattice with the Particles
     Lattice.RandomFill(N_PART);

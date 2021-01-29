@@ -36,6 +36,7 @@ class TParticle
         //Class Members
         //! Index of the particle
         const int Index;
+
         //! Monomers Sites that composes a particle
         TSite CSite, LSite, RSite;
         //! Orientation of the particle
@@ -49,7 +50,7 @@ class TParticle
         enum class MobState {FREE, YLL, YLB, YLA, YLR, BLOCKED};
         MobState mob;
         //! Index of the particle with I am linked
-        int LinkedWith;
+        int LinkedWith[4];
 
         //Class Methods
         //! Make a step forward in time

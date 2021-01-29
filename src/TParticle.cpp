@@ -82,25 +82,25 @@ void TParticle::Evolve()
 
         case MobState::YLA:
         {
-            ChekCloseYLA(Lattice->GetParticle(LinkedWith));
+            ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
         break;
         }
 
         case MobState::YLB:
         {
-            ChekCloseYLB(Lattice->GetParticle(LinkedWith));
+            ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
         break;
         }
 
         case MobState::YLR:
         {
-            ChekCloseYLR(Lattice->GetParticle(LinkedWith));
+            ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
         break;
         }
 
         case MobState::YLL:
         {
-            ChekCloseYLL(Lattice->GetParticle(LinkedWith));
+            ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
             break;
         }
     }
@@ -179,6 +179,8 @@ if (other.mob==MobState::FREE) return;
         //DL at As
         if (other.Spin==(Spin+3)%6 && is_activeA && is_freeR && other.is_freeR && other.is_activeA) {
             mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
+            LinkedWith[2]=other.Index; other.LinkedWith[3]=Index;
+            LinkedWith[3]=other.Index; other.LinkedWith[2]=Index;
             is_activeA=false; is_freeR=false; other.is_freeR=false; other.is_activeA=false;
             //std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -186,7 +188,8 @@ if (other.mob==MobState::FREE) return;
         }
         //YL at my A
         if (other.Spin==(Spin+4)%6 && is_activeA && other.is_freeR){
-            mob=MobState::YLA; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLA; other.mob=MobState::BLOCKED;
+            LinkedWith[2]=other.Index; other.LinkedWith[3]=Index;
             is_activeA=false; other.is_freeR=false;
             //std::cout << "YL at his A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -198,6 +201,8 @@ if (other.mob==MobState::FREE) return;
         //DL at Bs
         if (other.Spin==(Spin+3)%6 && is_activeB && is_freeL && other.is_freeL && other.is_activeB) {
             mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
+            LinkedWith[0]=other.Index; other.LinkedWith[1]=Index;
+            LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
             is_activeB=false; is_freeL=false; other.is_freeL=false; other.is_activeB=false;
             //std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -205,7 +210,8 @@ if (other.mob==MobState::FREE) return;
         }
         //YL at my B
         if (other.Spin==(Spin+2)%6 && is_activeB && other.is_freeL){
-            mob=MobState::YLB; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLB; other.mob=MobState::BLOCKED;
+            LinkedWith[1]=other.Index; other.LinkedWith[0]=Index;
             is_activeB=false; other.is_freeL=false;
             //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -222,7 +228,8 @@ if (other.mob==MobState::FREE) return;
     if (RSite==other.CSite){
         //YL at other A
         if (other.Spin==(Spin+2)%6 && is_freeR && other.is_activeA){
-            mob=MobState::YLR; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLR; other.mob=MobState::BLOCKED;
+            LinkedWith[3]=other.Index; other.LinkedWith[2]=Index;
             is_freeR=false; other.is_activeA=false;
             //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -238,7 +245,8 @@ if (other.mob==MobState::FREE) return;
         if (LSite==other.CSite){
         //YL at other B
         if (other.Spin==(Spin+4)%6 && is_freeL && other.is_activeB){
-            mob=MobState::YLL; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLL; other.mob=MobState::BLOCKED;
+            LinkedWith[0]=other.Index; other.LinkedWith[1]=Index;
             is_freeL=false; other.is_activeB=false;
             //std::cout << "YL at other B of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
