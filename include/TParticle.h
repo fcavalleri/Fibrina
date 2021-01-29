@@ -16,8 +16,10 @@ class TParticle
         //Class Static Parameters
         //! Linear dimension of the grid
         inline static int L;
-        //! Ratio between traslation and rotation
-        inline static double TrRat;
+        //! Rates for traslation and rotations
+        inline static double ZY_ROT_RATE;
+        inline static double X_ROT_RATE;
+        inline static double TRANSL_RATE;
         //! Treshold of activation for central sites A e B
         inline static double ActivationTreshold;
         //! Pointer to the Lattice shared by all Parts

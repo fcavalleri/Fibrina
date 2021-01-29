@@ -24,21 +24,31 @@ void DrawParticle(TParticle &i, sf::RenderWindow *app) {
 int main() {
 
 // Define system parameters
-    const int N_PART = 40;
-    const int GRID_LEN = 500;
-    const int T_MAX = 5000000;
+    const int N_PART = 200;
+    const int GRID_LEN = 200;
+
+    const int T_MAX = 500000;
     const int MSEC_WAIT = 0;
-    const int VIEW = 5000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
-    const int INSERT_PART = 5000;
-    const double ACT_TRESH = 0.5;
-    const double TROT_RATIO = 0.8;
+    const int VIEW = 500; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+
+    const double ZY_ROT_RATE = 1;
+    const double X_ROT_RATE = 0.66;
+    const double TRANSL_RATE = 0.9;
+
+    const double ACT_TRESH = 0.001;
+    const double CLO_TRESH = 0.01;
 
 // Create the Render Window
     sf::RenderWindow app(sf::VideoMode(GRID_LEN, GRID_LEN), "Simulazione Diffusione Monomeri");
-    sf::Event event;
+    sf::Event event{};
 
 // Create the Lattice
     TLattice Lattice(GRID_LEN);
+
+// Set Particle's diffusion parameters
+    TParticle::ZY_ROT_RATE = ZY_ROT_RATE;
+    TParticle::X_ROT_RATE = X_ROT_RATE;
+    TParticle::TRANSL_RATE = TRANSL_RATE;
 
 // Set Particle's Activation Treshold
     TParticle::ActivationTreshold = ACT_TRESH;
@@ -47,7 +57,7 @@ int main() {
     Lattice.SetGraphicContext(&app);
 
 // Fill the Lattice with the Particles
-    Lattice.RandomFill(2);
+    Lattice.RandomFill(N_PART);
 
 // Set for the DLA simulation
     Lattice.SetForDLA();
@@ -55,8 +65,6 @@ int main() {
 //Time Evolution
     for (int t = 0; t < T_MAX; ++t) {
 
-        //Insert a particle every INSERT_PART steps
-        if (t % INSERT_PART == 0) Lattice.RandomFill(1);
         // Possibility of slowing down the simulation
         usleep(MSEC_WAIT * 1000);
         // Clear between each time step

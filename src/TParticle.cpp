@@ -116,26 +116,30 @@ void TParticle::TryActivateB()
     if (ranMT()>ActivationTreshold) is_activeB=true;
 }
 
-
 void TParticle::FreeMove()
 {
-
     // Transalte CSite in one of the 6 neighbours Sites chosen randomly
-    int tr=randM(6);
-    CSite.Translate(dx[tr],dy[tr]);
-    // and by consequence LSite and RSite by the same dx and dy
-    LSite.Translate(dx[tr],dy[tr]);
-    RSite.Translate(dx[tr],dy[tr]);
+    if (ranMT()<TRANSL_RATE) {
+
+        int tr = randM(6);
+        CSite.Translate(dx[tr], dy[tr]);
+        // and by consequence LSite and RSite by the same dx and dy
+        LSite.Translate(dx[tr], dy[tr]);
+        RSite.Translate(dx[tr], dy[tr]);
+    }
 
     // Rotate randomly clockwise or anticlockwise
+    if (ranMT()<ZY_ROT_RATE) {
+        int r = randM(2);
+        Spin = (Spin + R[r] + 6) % 6;
+        RecalcExtSites();
+    }
 
-    int r=randM(2); //by now, no possibility of rest
-
-    //Change Orientation
-    Spin=(Spin+R[r]+6)%6;
-
-    RecalcExtSites();
-
+    //Rotate on his own axis
+    if (ranMT()<X_ROT_RATE) {
+        Spin = (Spin + 3) % 6;
+        RecalcExtSites();
+    }
 }
 
 void TParticle::RandomizePosition()
@@ -177,6 +181,7 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
             is_activeA=false; is_freeR=false; other.is_freeR=false; other.is_activeA=false;
             //std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
+            //Lattice->RandomFill(1);
             return;
         }
         //YL at my A
@@ -184,6 +189,7 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::YLA; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_activeA=false; other.is_freeR=false;
             //std::cout << "YL at his A of " << *this << " with " << other << std::endl;
+            //Lattice->RandomFill(1);
             return;
         }
     }
@@ -194,6 +200,7 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::BLOCKED; other.mob=MobState::BLOCKED;
             is_activeB=false; is_freeL=false; other.is_freeL=false; other.is_activeB=false;
             //std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
+            //Lattice->RandomFill(1);
             return;
         }
         //YL at my B
@@ -201,8 +208,8 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::YLB; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_activeB=false; other.is_freeL=false;
             //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
+            //Lattice->RandomFill(1);
             return;
-
         }
     }
 }
@@ -218,7 +225,7 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::YLoA; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_freeR=false; other.is_activeA=false;
             //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
-
+            //Lattice->RandomFill(1);
         }
     }
 }
@@ -234,6 +241,7 @@ if (other.mob==MobState::FREE) return;
             mob=MobState::YLoB; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_freeL=false; other.is_activeB=false;
             //std::cout << "YL at other B of " << *this << " with " << other << std::endl;
+            //Lattice->RandomFill(1);
         }
     }
 }

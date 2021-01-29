@@ -1,21 +1,7 @@
 #include "TLattice.h"
 
-TLattice::TLattice(int pL) : L(pL), Grid(L, std::vector<GridElement>(L)),
-                             N(0)  //è un membro costante che va inizializzato qui, chiamando lo specifico costruttore di quella classe.
-// dentro il costruttore lo starei assegnando
+TLattice::TLattice(int pL) : L(pL), Grid(L, std::vector<GridElement>(L)), N(0)  //Initialize
 {
-    //N=0;
-    // Assign at the member Grid that pointer to an array of element "GridElement", that is the structure int + bool(s)
-    /*Grid.resize(L);
-
-    for (auto& row : Grid) row.resize(L);*/
-
-    // Where thare is no particles, the index is set -1. we do not set the "is_central" becaus we'll set only when Index!=-1
-    /*for (int i=0; i<L*L; i++) {
-        Grid[i].Index=-1;
-        //Grid[i].is_central=false;
-    }*/
-
     // Set static parameters for TParticle and TSite classes
     TParticle::L = pL;
     TSite::L = pL;
@@ -49,13 +35,13 @@ void TLattice::RandomFill(int pN) {
 void TLattice::SetForDLA() {
     Parts[N - 1].ClearParticlePosition();
 
-    Parts[N - 1].CSite.x = 250;
-    Parts[N - 1].CSite.y = 250;
+    Parts[N - 1].CSite.x = L/2;
+    Parts[N - 1].CSite.y = L/2;
     Parts[N - 1].Spin = 0;
-    Parts[N - 1].LSite.x = 248;
-    Parts[N - 1].LSite.y = 250;
-    Parts[N - 1].RSite.x = 252;
-    Parts[N - 1].RSite.y = 250;
+    Parts[N - 1].LSite.x = L/2 -2;
+    Parts[N - 1].LSite.y = L/2;
+    Parts[N - 1].RSite.x = L/2 +2;
+    Parts[N - 1].RSite.y = L/2;
     Parts[N - 1].is_freeL = true;
     Parts[N - 1].is_freeR = true;
     Parts[N - 1].is_activeA = true;
