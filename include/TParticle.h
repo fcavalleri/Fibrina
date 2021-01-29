@@ -6,14 +6,13 @@
 #include "TLattice.h"
 #include <iostream>
 
-//"class forward declaration" da mettere quando 2 classi si includono a vicenda
+//class forward declaration
 class TLattice;
 
 //! Represent a Particle made up of 3 Sites
 class TParticle
 {
     public:
-        //Class Static Parameters
         //! Linear dimension of the grid
         inline static int L;
         //! Rates for traslation and rotations
@@ -29,56 +28,37 @@ class TParticle
 
         //Creator & Distructor
         TParticle(int pIndex);
-        TParticle(TSite pSite, int pSpin, int pIndex);
-        //Costruttore per copia che garantisce la copia corretta di questa classe
+        TParticle(TSite pCSite, int pSpin, int pIndex);
+        //Copy Constructor
         TParticle(const TParticle & o) = default;
-
         virtual ~TParticle();
 
         //Class Members
-        //!
+        //! Index of the particle
         const int Index;
-        //! Monomers Sites
+        //! Monomers Sites that composes a particle
         TSite CSite, LSite, RSite;
-        //! Orientation
+        //! Orientation of the particle
         int Spin;
         //! Site Activity
         bool is_freeL;
         bool is_freeR;
         bool is_activeA;
         bool is_activeB;
-
         //! State of the monomer
         enum class MobState {FREE, YLL, YLB, YLA, YLR, BLOCKED};
         MobState mob;
-
         //! Index of the particle with I am linked
         int LinkedWith;
 
         //Class Methods
         //! Make a step forward in time
         void Evolve();
-        void FreeMove();
-
-        //! Try to activate central sites A & B;
-        void TryActivateA();
-        void TryActivateB();
-
-        //! Check the possible neighbour to aggregation whit other particle
-        void CheckJoinWithCSite(TParticle &pPart);
-        void CheckJoinWithLSite(TParticle &pPart);
-        void CheckJoinWithRSite(TParticle &pPart);
-
-        //! Check the possible closure over other particle
-        void ChekCloseYLA(TParticle &pPart);
-        void ChekCloseYLB(TParticle &pPart);
-        void ChekCloseYLR(TParticle &pPart);
-        void ChekCloseYLL(TParticle &pPart);
 
         //Setter and Getter
-        //!
+        //! Set in the Lattice the Index of the particle in his Sites position
         void SetParticlePosition();
-        //!
+        //! Clear the Lattice where the particle was before moving
         void ClearParticlePosition();
 
         friend std::ostream& operator <<(std::ostream& os, const TParticle& me);  //passo l'indirizzo ma non può modificare la variabile (const)
@@ -91,17 +71,34 @@ class TParticle
         static constexpr int dx[6]={2,1,-1,-2,-1,1};  //IN ORDINE!!
         //! Possibility of Y coordinates translation on a triangular lattice
         static constexpr int dy[6]={0,1,1,0,-1,-1};
+        //! Possibility of a planar rotation (clockwise or anticlockwise)
         static constexpr int R[2]={-1,1};
 
         //Class Internal Methods
         //! Give random position at the CSite of the monomer
         void RandomizePosition();
-
         //! Give random orientation at the present monomer
         void RandomizeOrientation();
-
         //! Set the RSite & LSite
         void RecalcExtSites();
+        //! Movement of a FREE particle
+        void FreeMove();
+
+        //! Try to activate central sites A & B;
+        void TryActivateA();
+        void TryActivateB();
+
+        //! If it's possible an aggregation with the input particle, occurs
+        void CheckJoinWithCSite(TParticle &pPart);
+        void CheckJoinWithLSite(TParticle &pPart);
+        void CheckJoinWithRSite(TParticle &pPart);
+
+        //! If it's possible a closure over the input particle, occurs
+        void ChekCloseYLA(TParticle &pPart);
+        void ChekCloseYLB(TParticle &pPart);
+        void ChekCloseYLR(TParticle &pPart);
+        void ChekCloseYLL(TParticle &pPart);
+
 };
 
 #endif // TPARTICLE_H

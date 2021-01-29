@@ -103,11 +103,6 @@ void TParticle::Evolve()
             ChekCloseYLL(Lattice->GetParticle(LinkedWith));
             break;
         }
-
-
-
-
-
     }
 }
 
