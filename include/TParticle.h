@@ -21,7 +21,9 @@ class TParticle
         inline static double X_ROT_RATE;
         inline static double TRANSL_RATE;
         //! Treshold of activation for central sites A e B
-        inline static double ActivationTreshold;
+        inline static double ACT_TRESH;
+        inline static double CLO_TRESH;
+
         //! Pointer to the Lattice shared by all Parts
         inline static TLattice *Lattice;
 
@@ -47,7 +49,7 @@ class TParticle
         bool is_activeB;
 
         //! State of the monomer
-        enum class MobState {FREE, YLA, YLB, YLoA, YLoB, BLOCKED};
+        enum class MobState {FREE, YLL, YLB, YLA, YLR, BLOCKED};
         MobState mob;
 
         //! Index of the particle with I am linked
@@ -70,8 +72,8 @@ class TParticle
         //! Check the possible closure over other particle
         void ChekCloseYLA(TParticle &pPart);
         void ChekCloseYLB(TParticle &pPart);
-        void ChekCloseYLoA(TParticle &pPart);
-        void ChekCloseYLoB(TParticle &pPart);
+        void ChekCloseYLR(TParticle &pPart);
+        void ChekCloseYLL(TParticle &pPart);
 
         //Setter and Getter
         //!

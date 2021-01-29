@@ -44,9 +44,6 @@ TParticle::~TParticle()
 void TParticle::Evolve()
 {
 
-//if (!is_activeA) TryActivateA();
-//if (!is_activeB) TryActivateB();
-
     switch (mob)
     {   case MobState::FREE:
         {
@@ -95,11 +92,19 @@ void TParticle::Evolve()
         break;
         }
 
-        case MobState::YLoA:
+        case MobState::YLR:
         {
-            ChekCloseYLoA(Lattice->GetParticle(LinkedWith));
+            ChekCloseYLR(Lattice->GetParticle(LinkedWith));
         break;
         }
+
+        case MobState::YLL:
+        {
+            ChekCloseYLL(Lattice->GetParticle(LinkedWith));
+            break;
+        }
+
+
 
 
 
@@ -108,12 +113,12 @@ void TParticle::Evolve()
 
 void TParticle::TryActivateA()
 {
-    if (ranMT()>ActivationTreshold) is_activeA=true;
+    if (ranMT()>ACT_TRESH) is_activeA=true;
 }
 
 void TParticle::TryActivateB()
 {
-    if (ranMT()>ActivationTreshold) is_activeB=true;
+    if (ranMT()>ACT_TRESH) is_activeB=true;
 }
 
 void TParticle::FreeMove()
@@ -222,7 +227,7 @@ if (other.mob==MobState::FREE) return;
     if (RSite==other.CSite){
         //YL at other A
         if (other.Spin==(Spin+2)%6 && is_freeR && other.is_activeA){
-            mob=MobState::YLoA; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLR; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_freeR=false; other.is_activeA=false;
             //std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -238,7 +243,7 @@ if (other.mob==MobState::FREE) return;
         if (LSite==other.CSite){
         //YL at other B
         if (other.Spin==(Spin+4)%6 && is_freeL && other.is_activeB){
-            mob=MobState::YLoB; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
+            mob=MobState::YLL; other.mob=MobState::BLOCKED; LinkedWith=other.Index;
             is_freeL=false; other.is_activeB=false;
             //std::cout << "YL at other B of " << *this << " with " << other << std::endl;
             //Lattice->RandomFill(1);
@@ -248,7 +253,8 @@ if (other.mob==MobState::FREE) return;
 
 void TParticle::ChekCloseYLA(TParticle &other)
 {
-    if (!is_freeR || !other.is_activeA) return
+    if (!is_freeR || !other.is_activeA) return;
+    if (ranMT()>CLO_TRESH) return;
 
     ClearParticlePosition();
 
@@ -264,7 +270,8 @@ void TParticle::ChekCloseYLA(TParticle &other)
 
 void TParticle::ChekCloseYLB(TParticle &other)
 {
-    if (!is_freeL || !other.is_activeB) return
+    if (!is_freeL || !other.is_activeB) return;
+    if (ranMT()>CLO_TRESH) return;
 
     ClearParticlePosition();
 
@@ -278,9 +285,10 @@ void TParticle::ChekCloseYLB(TParticle &other)
 
 }
 
-void TParticle::ChekCloseYLoA(TParticle &other)
+void TParticle::ChekCloseYLR(TParticle &other)
 {
-    if (!is_activeA || !other.is_freeR) return
+    if (!is_activeA || !other.is_freeR) return;  //first check if there are closing conditions
+    if (ranMT()>CLO_TRESH ) return; //if there are, close with a rate CLO_RATE
 
     ClearParticlePosition();
 
@@ -294,9 +302,10 @@ void TParticle::ChekCloseYLoA(TParticle &other)
 
 }
 
-void TParticle::ChekCloseYLoB(TParticle &other)
+void TParticle::ChekCloseYLL(TParticle &other)
 {
-    if (!is_activeB || !other.is_freeL) return
+    if (!is_activeB || !other.is_freeL) return;
+    if (ranMT()>CLO_TRESH ) return;
 
     ClearParticlePosition();
 
@@ -333,8 +342,8 @@ switch (me)
     case TParticle::MobState::FREE: return os << "Free";
     case TParticle::MobState::YLA : return os << "YLA";
     case TParticle::MobState::YLB : return os << "YLB";
-    case TParticle::MobState::YLoA : return os << "YLoA";
-    case TParticle::MobState::YLoB : return os << "YLoB";
+    case TParticle::MobState::YLR : return os << "YLoA";
+    case TParticle::MobState::YLL : return os << "YLoB";
     case TParticle::MobState::BLOCKED: return os << "Blocked";
     }
 }
