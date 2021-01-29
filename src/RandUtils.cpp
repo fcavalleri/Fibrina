@@ -1,16 +1,16 @@
 #include "RandUtils.h"
+#include <random>
 
-int randM(int M)
-{
-return ranMT()*M;
+std::mt19937 &GetEngine() {
+    static std::random_device R;
+    static std::mt19937 E(R());  //Mersenne Twister random numbers
+    return E;
 }
 
-RandUtils::RandUtils()
-{
-    //ctor
+int randM(int M) {
+    return std::uniform_int_distribution<int>(0, M - 1)(GetEngine());
 }
 
-RandUtils::~RandUtils()
-{
-    //dtor
+double ranMT() {
+    return std::uniform_real_distribution<double>(0, 1)(GetEngine());
 }

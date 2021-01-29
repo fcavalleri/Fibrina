@@ -1,7 +1,8 @@
 #include "TLattice.h"
 
-TLattice::TLattice(int pL):L(pL),Grid(L,std::vector<GridElement>(L)),N(0)  //è un membro costante che va inizializzato qui, chiamando lo specifico costruttore di quella classe.
-                                          // dentro il costruttore lo starei assegnando
+TLattice::TLattice(int pL) : L(pL), Grid(L, std::vector<GridElement>(L)),
+                             N(0)  //è un membro costante che va inizializzato qui, chiamando lo specifico costruttore di quella classe.
+// dentro il costruttore lo starei assegnando
 {
     //N=0;
     // Assign at the member Grid that pointer to an array of element "GridElement", that is the structure int + bool(s)
@@ -16,30 +17,25 @@ TLattice::TLattice(int pL):L(pL),Grid(L,std::vector<GridElement>(L)),N(0)  //è 
     }*/
 
     // Set static parameters for TParticle and TSite classes
-    TParticle::L=pL;
-    TSite::L=pL;
-    TParticle::Lattice=this; //this è il puntatore all'istanza corrente della classe
+    TParticle::L = pL;
+    TSite::L = pL;
+    TParticle::Lattice = this; //this è il puntatore all'istanza corrente della classe
 
-    //Initialize random generator
-    seedMT2();
 }
 
 
-TLattice::~TLattice()
-{
+TLattice::~TLattice() {
     //dtor
 }
 
-void TLattice::RandomFill(int pN)
-{
+void TLattice::RandomFill(int pN) {
 
 //Fill with a cycle the vector Parts
-for (int i=0; i<pN; i++)
-    {
-    TParticle x(N);        //Create a Tparticle-Type variable named x Setting x Index as current N
-    N++;                //Increment N by unit
-    x.SetParticlePosition();
-    Parts.push_back(x); //Put x in the last position of vector Parts
+    for (int i = 0; i < pN; i++) {
+        TParticle x(N);        //Create a Tparticle-Type variable named x Setting x Index as current N
+        N++;                //Increment N by unit
+        x.SetParticlePosition();
+        Parts.push_back(x); //Put x in the last position of vector Parts
     }
 }
 
@@ -50,38 +46,35 @@ for (int i=0; i<pN; i++)
     Parts.push_back(pPart);
 }*/
 
-void TLattice::SetForDLA()
-{
-    Parts[N-1].ClearParticlePosition();
+void TLattice::SetForDLA() {
+    Parts[N - 1].ClearParticlePosition();
 
-    Parts[N-1].CSite.x=250;
-    Parts[N-1].CSite.y=250;
-    Parts[N-1].Spin=0;
-    Parts[N-1].LSite.x=248;
-    Parts[N-1].LSite.y=250;
-    Parts[N-1].RSite.x=252;
-    Parts[N-1].RSite.y=250;
-    Parts[N-1].is_freeL=true;
-    Parts[N-1].is_freeR=true;
-    Parts[N-1].is_activeA=true;
-    Parts[N-1].is_activeB=true;
-    Parts[N-1].mob=TParticle::MobState::BLOCKED;
+    Parts[N - 1].CSite.x = 250;
+    Parts[N - 1].CSite.y = 250;
+    Parts[N - 1].Spin = 0;
+    Parts[N - 1].LSite.x = 248;
+    Parts[N - 1].LSite.y = 250;
+    Parts[N - 1].RSite.x = 252;
+    Parts[N - 1].RSite.y = 250;
+    Parts[N - 1].is_freeL = true;
+    Parts[N - 1].is_freeR = true;
+    Parts[N - 1].is_activeA = true;
+    Parts[N - 1].is_activeB = true;
+    Parts[N - 1].mob = TParticle::MobState::BLOCKED;
 
 
-    Parts[N-1].SetParticlePosition();
+    Parts[N - 1].SetParticlePosition();
 }
 
-void TLattice::SetGraphicContext(sf::RenderWindow* pApp)
-{
-    app=pApp;
+void TLattice::SetGraphicContext(sf::RenderWindow *pApp) {
+    app = pApp;
 }
 
-void TLattice::Evolve()
-{
+void TLattice::Evolve() {
     //For N times, chose a random particle from Parts vector and Evolve it
-    for (int i=0; i<N; i++){
+    for (int i = 0; i < N; i++) {
 
-    Parts[randM(N)].Evolve();
+        Parts[randM(N)].Evolve();
 
     }
 
@@ -98,31 +91,28 @@ void TLattice::Evolve()
         }*/
 }
 
-void TLattice::SetSitePosition(TSite& pSite, int pIndex)
-{
+void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
     //Gives at the int element of the Grid struct the value pIndex
     Grid[pSite.x][pSite.y].push_back(pIndex);
     //Gives at the bool element of the Grid struct the value is_central given by pSite
     //Grid[pSite.x*L+pSite.y].is_central=pSite.is_central;
 }
 
-void TLattice::ClearSitePosition(TSite& pSite, int pIndex)//////////////////////////////////////
+void TLattice::ClearSitePosition(TSite &pSite, int pIndex)//////////////////////////////////////
 {
     //Gives at the int element of the Grid struct the value -1. The bool value doesn't matter
-    GridElement& cell = Grid[pSite.x][pSite.y];
-    cell.erase(std::find(cell.begin(),cell.end(),pIndex));
+    GridElement &cell = Grid[pSite.x][pSite.y];
+    cell.erase(std::find(cell.begin(), cell.end(), pIndex));
     //prima era
     /*std::remove(Grid[pos].begin(),Grid[pos].end(),pIndex),Grid[pos].end()*/
 }
 
-TLattice::GridElement& TLattice::GetSiteIndexes(TSite &pSite)
-{
+TLattice::GridElement &TLattice::GetSiteIndexes(TSite &pSite) {
 //if (Grid[pSite.x*L+pSite.y].size()==0) return -1
-return Grid[pSite.x][pSite.y];
+    return Grid[pSite.x][pSite.y];
 }
 
-TParticle& TLattice::GetParticle(int pIndex)
-{
+TParticle &TLattice::GetParticle(int pIndex) {
 //not a copy, the reference at that particle with index pIndex
-return Parts.at(pIndex);
+    return Parts.at(pIndex);
 }
