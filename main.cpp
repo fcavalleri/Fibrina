@@ -24,7 +24,7 @@
 int main() {
 
 // Define system parameters
-    const int N_PART = 50;
+    const int N_PART = 30;
     const int GRID_LEN = 100;
 
     const int T_MAX = 500000;
