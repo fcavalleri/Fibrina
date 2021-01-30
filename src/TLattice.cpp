@@ -33,23 +33,23 @@ void TLattice::RandomFill(int pN) {
 }*/
 
 void TLattice::SetForDLA() {
-    Parts[N - 1].ClearParticlePosition();
+    Parts[0].ClearParticlePosition();
 
-    Parts[N - 1].CSite.x = L/2;
-    Parts[N - 1].CSite.y = L/2;
-    Parts[N - 1].Spin = 0;
-    Parts[N - 1].LSite.x = L/2 -2;
-    Parts[N - 1].LSite.y = L/2;
-    Parts[N - 1].RSite.x = L/2 +2;
-    Parts[N - 1].RSite.y = L/2;
-    Parts[N - 1].is_freeL = true;
-    Parts[N - 1].is_freeR = true;
-    Parts[N - 1].is_activeA = true;
-    Parts[N - 1].is_activeB = true;
-    Parts[N - 1].mob = TParticle::MobState::BLOCKED;
+    Parts[0].CSite.x = L/2;
+    Parts[0].CSite.y = L/2;
+    Parts[0].Spin = 0;
+    Parts[0].LSite.x = L/2 -2;
+    Parts[0].LSite.y = L/2;
+    Parts[0].RSite.x = L/2 +2;
+    Parts[0].RSite.y = L/2;
+    Parts[0].is_freeL = true;
+    Parts[0].is_freeR = true;
+    Parts[0].is_activeA = true;
+    Parts[0].is_activeB = true;
+    Parts[0].mob = TParticle::MobState::BLOCKED;
 
 
-    Parts[N - 1].SetParticlePosition();
+    Parts[0].SetParticlePosition();
 }
 
 void TLattice::Evolve() {

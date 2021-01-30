@@ -315,7 +315,7 @@ void TParticle::ChekCloseYLR(TParticle &other) {
 
     mob = MobState::BLOCKED;
     other.mob = MobState::BLOCKED;
-    CSite = other.RSite;
+    CSite = other.RSite;   //questa assegrazione sta avvenendo in maniera corretta??
     Spin = (Spin - 1) % 6;
     RecalcExtSites();
     LinkedWith[2] = other.Index;
@@ -378,7 +378,7 @@ std::ostream &operator<<(std::ostream &os, const TParticle::MobState &me) {
 
 std::ostream &operator<<(std::ostream &os, const TParticle &me) {
     os << "Particle " << me.Index << " CS:" << me.CSite << " LS:" << me.LSite << " RS:" << me.RSite;
-    os << " Spin:" << me.Spin << me.mob << " Parts Linked in L-B-A-R: " << me.LinkedWith[0] << me.LinkedWith[1]
-       << me.LinkedWith[2] << me.LinkedWith[3] << " ";
+    os << " Spin:" << me.Spin << me.mob << " Parts Linked in L-B-A-R: " << me.LinkedWith[0] <<"/"<< me.LinkedWith[1] <<
+       "/" << me.LinkedWith[2]<< "/" << me.LinkedWith[3] << " ";
     return os;
 }
