@@ -22,12 +22,12 @@
 int main() {
 
 // Define system parameters
-    const int N_PART = 30;
-    const int GRID_LEN = 100;
+    const int N_PART = 100;
+    const int GRID_LEN = 300;
 
     const int T_MAX = 500000;
     const int MSEC_WAIT = 0;
-    const int VIEW = 1; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+    const int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
     const double ZY_ROT_RATE = 1;
     const double X_ROT_RATE = 0.66;
@@ -76,20 +76,8 @@ int main() {
             for (auto &i : Lattice.Parts) {
                 if (i.mob!=TParticle::MobState::FREE) {
                     //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
-                    sf::RectangleShape monomer(sf::Vector2f(3.7,3.7*LEN_WIDHT_RATIO));
-                    //SetDrawMonomerSpin(&monomer);
 
-                    monomer.setOrigin(monomer.getSize()*float(0.5));
-                    monomer.setPosition(sf::Vector2f(i.CSite.x, i.CSite.y));
-                    if (i.Spin == 0)
-                    if (i.Spin == 5 ) monomer.rotate(45);
-                    if (i.Spin == 4 ) monomer.rotate(135);
-                    if (i.Spin == 3 ) monomer.rotate(180);
-                    if (i.Spin == 2 ) monomer.rotate(225);
-                    if (i.Spin == 1 ) monomer.rotate(315);
-
-                    app.draw(monomer);
-
+                    //POINTS
                     /*sf::Vertex monomeroC = sf::Vertex(sf::Vector2f(i.CSite.x, i.CSite.y), sf::Color::Red);
                     app.draw(&monomeroC, 1, sf::Points);
 
@@ -98,6 +86,32 @@ int main() {
 
                     sf::Vertex monomeroD = sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y), sf::Color::White);
                     app.draw(&monomeroD, 1, sf::Points);*/
+
+
+                    //LINES
+                    sf::Vertex monomer[] =
+                            {
+                                    sf::Vertex(sf::Vector2f(i.LSite.x, i.LSite.y)),
+                                    sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y))
+                            };
+
+                    app.draw(monomer, 2, sf::Lines);
+
+                    //RECTANGLES
+                   /* sf::RectangleShape monomer(sf::Vector2f(3.7,3.7*LEN_WIDHT_RATIO));
+                    //SetDrawMonomerSpin(&monomer);
+
+                    monomer.setOrigin(monomer.getSize()*float(0.5));
+                    monomer.setPosition(sf::Vector2f(i.CSite.x, i.CSite.y));
+                    if (i.Spin == 0)
+                    if (i.Spin == 1 ) monomer.rotate(45);
+                    if (i.Spin == 2 ) monomer.rotate(135);
+                    if (i.Spin == 3 ) monomer.rotate(180);
+                    if (i.Spin == 4 ) monomer.rotate(225);
+                    if (i.Spin == 5 ) monomer.rotate(315);
+
+                    app.draw(monomer);*/
+
                 }
             }
 

@@ -143,7 +143,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeR = false;
             other.is_activeA = false;
             std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
             return;
         }
         //YL at my A
@@ -155,7 +155,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             is_activeA = false;
             other.is_freeR = false;
             std::cout << "YL at his A of " << *this << " with " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
             return;
         }
     }
@@ -174,7 +174,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeL = false;
             other.is_activeB = false;
             std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
             return;
         }
         //YL at my B
@@ -186,7 +186,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             is_activeB = false;
             other.is_freeL = false;
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
             return;
         }
     }
@@ -206,7 +206,7 @@ void TParticle::CheckJoinWithRSite(TParticle &other) {
             is_freeR = false;
             other.is_activeA = false;
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
         }
     }
 }
@@ -225,7 +225,7 @@ void TParticle::CheckJoinWithLSite(TParticle &other) {
             is_freeL = false;
             other.is_activeB = false;
             std::cout << "YL at other B of " << *this << " with " << other << std::endl;
-            //Lattice->RandomFill(1);
+            Lattice->RandomFill(1);
         }
     }
 }
