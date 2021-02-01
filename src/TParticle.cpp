@@ -374,6 +374,7 @@ std::ostream &operator<<(std::ostream &os, const TParticle::MobState &me) {
         case TParticle::MobState::BLOCKED:
             return os << "Blocked";
     }
+    return os;
 }
 
 std::ostream &operator<<(std::ostream &os, const TParticle &me) {
