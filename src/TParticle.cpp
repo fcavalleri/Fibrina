@@ -1,44 +1,27 @@
 #include "TParticle.h"
 
-TParticle::TParticle(int pIndex) : Index(pIndex)/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
+TParticle::TParticle(int pIndex) : Index(pIndex), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
 {
     RandomizePosition();
     RandomizeOrientation();
-    is_freeL = true;
-    is_freeR = true;
+
     is_activeA = true;
     is_activeB = true;
+
     mob = MobState::FREE;
-    LinkedWith[0] = -1;
+    /*LinkedWith[0] = -1;
     LinkedWith[1] = -1;
     LinkedWith[2] = -1;
-    LinkedWith[3] = -1;
+    LinkedWith[3] = -1;*/
 }
 
-/*TParticle::TParticle(const TParticle & o) {
-Index=o.Index;
-CSite=o.CSite;
-RSite=o.RSite;
-LSite=o.LSite;
-Spin=o.Spin;
-is_freeL=o.is_freeL;
-is_freeR=o.is_freeR;
-is_activeA=o.is_activeA;
-is_activeB=o.is_activeB;
-mob=o.mob;
-};*/
-
-/*TParticle::TParticle(TSite pSite, int pSpin, int pIndex):Index(pIndex)
+TParticle::TParticle(int pIndex, TSite pSite, int pSpin):Index(pIndex),CSite(pSite), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}, Spin(pSpin)
 {
-CSite=pSite;
-Spin=pSpin;
 RecalcExtSites();
-is_freeL=true;
-is_freeR=true;
 is_activeA=false;
 is_activeB=false;
 mob=MobState::FREE;
-}*/
+}
 
 TParticle::~TParticle() {
     //dtor
@@ -78,6 +61,7 @@ void TParticle::Evolve() {
         }
 
         case MobState::LINKED: {
+            if (LinkedWith[1] == -1 && LinkedWith[2] == -1) TryActivateAB();
             CheckClose();
             break;
         }
@@ -247,43 +231,42 @@ void TParticle::CheckJoinWithLSite(TParticle &other) {
 }
 
 void TParticle::CheckClose() {
-    if (LinkedWith[0] != -1) {
+    if (!is_freeL) {
         ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
         return;
     }
-    if (LinkedWith[1] != -1) {
+    if (!is_activeB) {
         ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
         return;
     }
-    if (LinkedWith[2] != -1) {
+    if (!is_activeA) {
         ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
         return;
     }
-    if (LinkedWith[3] != -1) {
+    if (!is_freeR) {
         ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
         return;
     }
 }
 
-void TParticle::ChekCloseYLA(TParticle &other) {
-    if (!is_freeR || !other.is_activeA) return;
+
+void TParticle::ChekCloseYLL(TParticle &other) {
+    if (!is_activeB || !other.is_freeL) return;
     if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
-    mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
+    CSite.Translate(dx[(Spin+2)%6], dy[(Spin+2)%6]);
     Spin = (Spin + 1) % 6;
     RecalcExtSites();
-    LinkedWith[3] = other.Index;
-    other.LinkedWith[2] = Index;
-    is_freeR = false;
-    other.is_activeA = false;
+    is_activeB = false; LinkedWith[1] = other.Index;
+    other.is_freeL = false; other.LinkedWith[0] = Index;
+    mob = MobState::BLOCKED;
+    other.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
 }
 
 void TParticle::ChekCloseYLB(TParticle &other) {
@@ -292,19 +275,34 @@ void TParticle::ChekCloseYLB(TParticle &other) {
 
     ClearParticlePosition();
 
-    mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
     Spin = (Spin - 1) % 6;
     RecalcExtSites();
-    LinkedWith[1] = other.Index;
-    other.LinkedWith[0] = Index;
-    is_freeL = false;
-    other.is_activeB = false;
+    is_freeL = false; LinkedWith[0] = other.Index;
+    other.is_activeB = false; other.LinkedWith[1] = Index;
+    mob = MobState::BLOCKED;
+    other.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+}
 
+void TParticle::ChekCloseYLA(TParticle &other) {
+    if (!is_freeR || !other.is_activeA) return;
+    if (ranMT() > CLO_TRESH) return;
+
+    ClearParticlePosition();
+
+    Spin = (Spin + 1) % 6;
+    RecalcExtSites();
+    is_freeR = false; LinkedWith[3] = other.Index;
+    other.is_activeA = false; other.LinkedWith[2] = Index;
+    mob = MobState::BLOCKED;
+    other.mob = MobState::BLOCKED;
+
+    SetParticlePosition();
+
+    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 }
 
 void TParticle::ChekCloseYLR(TParticle &other) {
@@ -313,43 +311,19 @@ void TParticle::ChekCloseYLR(TParticle &other) {
 
     ClearParticlePosition();
 
-    mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
-    CSite = other.RSite;   //questa assegrazione sta avvenendo in maniera corretta??
+    CSite.Translate(dx[(Spin+1)%6], dy[(Spin+1)%6]);
     Spin = (Spin - 1) % 6;
     RecalcExtSites();
-    LinkedWith[2] = other.Index;
-    other.LinkedWith[3] = Index;
-    is_activeA = false;
-    other.is_freeR = false;
-
-    SetParticlePosition();
-
-    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
-}
-
-void TParticle::ChekCloseYLL(TParticle &other) {
-    if (!is_activeB || !other.is_freeL) return;
-    if (ranMT() > CLO_TRESH) return;
-
-    ClearParticlePosition();
-
+    is_activeA = false; LinkedWith[2] = other.Index;
+    other.is_freeR = false; other.LinkedWith[3] = Index;
     mob = MobState::BLOCKED;
     other.mob = MobState::BLOCKED;
-    CSite = other.LSite;
-    Spin = (Spin + 1) % 6;
-    RecalcExtSites();
-    LinkedWith[1] = other.Index;
-    other.LinkedWith[0] = Index;
-    is_activeB = false;
-    other.is_freeL = false;
 
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
 }
+
 
 void TParticle::SetParticlePosition() {
 //Set Site by Site through the pointer at the shared Lattice

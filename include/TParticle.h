@@ -1,6 +1,6 @@
 #ifndef TPARTICLE_H
 #define TPARTICLE_H
-#include <math.h>
+#include <cmath>
 #include "RandUtils.h"
 #include "TSite.h"
 #include "TLattice.h"
@@ -28,7 +28,7 @@ class TParticle
 
         //Creator & Distructor
         TParticle(int pIndex);
-        TParticle(TSite pCSite, int pSpin, int pIndex);
+        TParticle(int pIndex, TSite pCSite, int pSpin);
         //Copy Constructor
         TParticle(const TParticle & o) = default;
         virtual ~TParticle();

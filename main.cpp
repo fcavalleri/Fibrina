@@ -1,9 +1,7 @@
 #include <SFML/Graphics.hpp>
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <string.h>
-#include <time.h>
+#include <cstdio>
+#include <cmath>
+#include <ctime>
 #include <unistd.h>
 #include "TLattice.h"
 #include "TParticle.h"
@@ -41,11 +39,11 @@ int main() {
     const double CLO_TRESH = 0.001;
 
 // Create the Render Window
-    sf::RenderWindow app(sf::VideoMode(GRID_LEN, GRID_LEN), "Simulazione Diffusione Monomeri");
+    sf::RenderWindow app(sf::VideoMode(GRID_LEN, GRID_LEN), "Simulazione Aggregazione Fibrina");
     sf::Event event{};
 
 // Create the Lattice
-    TLattice Lattice(GRID_LEN);
+    TLattice Lattice{GRID_LEN};
 
 // Set Particle's diffusion parameters
     TParticle::ZY_ROT_RATE = ZY_ROT_RATE;
@@ -78,16 +76,17 @@ int main() {
             for (auto &i : Lattice.Parts) {
                 if (i.mob!=TParticle::MobState::FREE) {
                     //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
-                    sf::RectangleShape monomer(sf::Vector2f(3.5,3.5*LEN_WIDHT_RATIO));
-                    monomer.setOrigin(monomer.getSize()*0.5f);
-                    monomer.setPosition(i.CSite.x,i.CSite.y);
+                    sf::RectangleShape monomer(sf::Vector2f(3.7,3.7*LEN_WIDHT_RATIO));
                     //SetDrawMonomerSpin(&monomer);
 
-                    if (i.Spin == 1 ) monomer.rotate(45);
-                    if (i.Spin == 2 ) monomer.rotate(135);
+                    monomer.setOrigin(monomer.getSize()*float(0.5));
+                    monomer.setPosition(sf::Vector2f(i.CSite.x, i.CSite.y));
+                    if (i.Spin == 0)
+                    if (i.Spin == 5 ) monomer.rotate(45);
+                    if (i.Spin == 4 ) monomer.rotate(135);
                     if (i.Spin == 3 ) monomer.rotate(180);
-                    if (i.Spin == 4 ) monomer.rotate(225);
-                    if (i.Spin == 5 ) monomer.rotate(315);
+                    if (i.Spin == 2 ) monomer.rotate(225);
+                    if (i.Spin == 1 ) monomer.rotate(315);
 
                     app.draw(monomer);
 

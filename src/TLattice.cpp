@@ -18,7 +18,7 @@ void TLattice::RandomFill(int pN) {
 
 //Fill with a cycle the vector Parts
     for (int i = 0; i < pN; i++) {
-        TParticle x(N);        //Create a Tparticle-Type variable named x Setting x Index as current N
+        TParticle x{N};        //Create a Tparticle-Type variable named x Setting x Index as current N
         N++;                //Increment N by unit
         x.SetParticlePosition();
         Parts.push_back(x); //Put x in the last position of vector Parts
