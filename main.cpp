@@ -79,7 +79,7 @@ int main() {
                 if (i.mob!=TParticle::MobState::FREE) {
                     //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
                     sf::RectangleShape monomer(sf::Vector2f(3.5,3.5*LEN_WIDHT_RATIO));
-                    monomer.setOrigin(monomer.getSize()*float(0.5));
+                    monomer.setOrigin(monomer.getSize()*0.5f);
                     monomer.setPosition(i.CSite.x,i.CSite.y);
                     //SetDrawMonomerSpin(&monomer);
 
