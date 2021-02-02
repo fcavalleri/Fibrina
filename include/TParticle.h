@@ -54,7 +54,7 @@ class TParticle
 
         //Class Methods
         //! Make a step forward in time
-        void Evolve();
+        bool Evolve();
 
         //Setter and Getter
         //! Set in the Lattice the Index of the particle in his Sites position
@@ -89,9 +89,9 @@ class TParticle
         void TryActivateAB();
 
         //! If it's possible an aggregation with the input particle, occurs
-        void CheckJoinWithCSite(TParticle &pPart);
-        void CheckJoinWithLSite(TParticle &pPart);
-        void CheckJoinWithRSite(TParticle &pPart);
+        bool CheckJoinWithCSite(TParticle &pPart);
+        bool CheckJoinWithLSite(TParticle &pPart);
+        bool CheckJoinWithRSite(TParticle &pPart);
 
         //! If it's possible a closure over the input particle, occurs
         void CheckClose();

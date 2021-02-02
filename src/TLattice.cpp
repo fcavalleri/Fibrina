@@ -56,8 +56,7 @@ void TLattice::Evolve() {
     //For N times, chose a random particle from Parts vector and Evolve it
     for (int i = 0; i < N; i++) {
 
-        Parts[randM(N)].Evolve();
-
+        if (Parts[randM(N)].Evolve()) RandomFill(1);
     }
 
     /*for (auto &i : Parts){

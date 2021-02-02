@@ -27,7 +27,9 @@ TParticle::~TParticle() {
     //dtor
 }
 
-void TParticle::Evolve() {
+bool TParticle::Evolve() {
+
+    bool JustJoined=false;
 
     switch (mob) {
         case MobState::FREE: {
@@ -39,19 +41,19 @@ void TParticle::Evolve() {
 
             for (int i : Lattice->GetSiteIndexes(CSite)) {
                 if (i != Index) {
-                    CheckJoinWithCSite(Lattice->GetParticle(i));
+                    if (CheckJoinWithCSite(Lattice->GetParticle(i))) JustJoined=true;
                 }
             }
 
             for (int i : Lattice->GetSiteIndexes(RSite)) {
                 if (i != Index) {
-                    CheckJoinWithRSite(Lattice->GetParticle(i));
+                    if (CheckJoinWithRSite(Lattice->GetParticle(i))) JustJoined=true;
                 }
             }
 
             for (int i : Lattice->GetSiteIndexes(LSite)) {
                 if (i != Index) {
-                    CheckJoinWithLSite(Lattice->GetParticle(i));
+                    if (CheckJoinWithLSite(Lattice->GetParticle(i))) JustJoined=true;
                 }
             }
 
@@ -69,6 +71,7 @@ void TParticle::Evolve() {
         case MobState::BLOCKED: {
         }
     }
+    return JustJoined;
 }
 
 void TParticle::TryActivateAB() {
@@ -125,9 +128,9 @@ void TParticle::RecalcExtSites() {
     LSite = TSite((CSite.x - dx[Spin] + L) % L, (CSite.y - dy[Spin] + L) % L);
 }
 
-void TParticle::CheckJoinWithCSite(TParticle &other) {
+bool TParticle::CheckJoinWithCSite(TParticle &other) {
 
-    if (other.mob == MobState::FREE) return;
+    if (other.mob == MobState::FREE) return false;
 
     if (CSite == other.RSite) {
         //DL at As
@@ -143,8 +146,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeR = false;
             other.is_activeA = false;
             std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
-            Lattice->RandomFill(1);
-            return;
+            return true;
         }
         //YL at my A
         if (other.Spin == (Spin + 4) % 6 && is_activeA && other.is_freeR) {
@@ -156,7 +158,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeR = false;
             std::cout << "YL at his A of " << *this << " with " << other << std::endl;
             Lattice->RandomFill(1);
-            return;
+            return true;
         }
     }
 
@@ -175,7 +177,7 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_activeB = false;
             std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
             Lattice->RandomFill(1);
-            return;
+            return true;
         }
         //YL at my B
         if (other.Spin == (Spin + 2) % 6 && is_activeB && other.is_freeL) {
@@ -187,14 +189,15 @@ void TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeL = false;
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             Lattice->RandomFill(1);
-            return;
+            return true;
         }
     }
+    return false;
 }
 
-void TParticle::CheckJoinWithRSite(TParticle &other) {
+bool TParticle::CheckJoinWithRSite(TParticle &other) {
 
-    if (other.mob == MobState::FREE) return;
+    if (other.mob == MobState::FREE) return false;
 
     if (RSite == other.CSite) {
         //YL at other A
@@ -206,14 +209,15 @@ void TParticle::CheckJoinWithRSite(TParticle &other) {
             is_freeR = false;
             other.is_activeA = false;
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
-            Lattice->RandomFill(1);
+            return true;
         }
     }
+    return false;
 }
 
-void TParticle::CheckJoinWithLSite(TParticle &other) {
+bool TParticle::CheckJoinWithLSite(TParticle &other) {
 
-    if (other.mob == MobState::FREE) return;
+    if (other.mob == MobState::FREE) return false;
 
     if (LSite == other.CSite) {
         //YLL (at other B)
@@ -225,9 +229,10 @@ void TParticle::CheckJoinWithLSite(TParticle &other) {
             is_freeL = false;
             other.is_activeB = false;
             std::cout << "YL at other B of " << *this << " with " << other << std::endl;
-            Lattice->RandomFill(1);
+            return true;
         }
     }
+return false;
 }
 
 void TParticle::CheckClose() {
