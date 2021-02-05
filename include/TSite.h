@@ -31,6 +31,6 @@ class TSite
 };
 
 //Define a class operator
-bool operator== (const TSite a, const TSite b);
+bool operator== (const TSite& a, const TSite& b);
 
 #endif // TSITE_H
