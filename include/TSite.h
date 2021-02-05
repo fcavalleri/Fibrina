@@ -6,7 +6,7 @@
 class TSite
 {
     public:
-        //Constructors & Distructors
+        //Constructors & Destructors
         TSite();
         TSite(int x, int y);
         virtual ~TSite();
