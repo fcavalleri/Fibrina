@@ -27,7 +27,7 @@ std::ostream& operator <<(std::ostream& os, const TSite& me)
 return os << "(" << me.x << "," << me.y << ")";
 }
 
-bool operator== (const TSite a, const TSite b)
+bool operator== (const TSite& a, const TSite& b)
 {
     if ((a.x==b.x) && (a.y==b.y)) return true;
     else return false;

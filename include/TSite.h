@@ -6,7 +6,7 @@
 class TSite
 {
     public:
-        //Constructors & Distructors
+        //Constructors & Destructors
         TSite();
         TSite(int x, int y);
         virtual ~TSite();
@@ -17,7 +17,7 @@ class TSite
         inline static int Ly;
 
         //! Site coordinates.
-        //! Be careful: this are lattice coordinate that sould be rescalated in real world by...
+        //! Be careful: this are lattice coordinate that should be rescaled in real world by...
         int x, y;
 
         //Class Methods
@@ -33,6 +33,6 @@ class TSite
 };
 
 //Define a class operator
-bool operator== (const TSite a, const TSite b);
+bool operator== (const TSite& a, const TSite& b);
 
 #endif // TSITE_H
