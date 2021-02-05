@@ -15,7 +15,7 @@ class TSite
         //! Linear dimension of the grid
         inline static int L;
         //! Site coordinates.
-        //! Be careful: this are lattice coordinate that sould be rescalated in real world by...
+        //! Be careful: this are lattice coordinate that should be rescaled in real world by...
         int x, y;
 
         //Class Methods
