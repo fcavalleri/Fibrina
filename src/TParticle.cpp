@@ -125,7 +125,7 @@ void TParticle::RandomizeOrientation() {
 
 void TParticle::RecalcExtSites() {
     RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
-    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Lx) % Lx);
+    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
 }
 
 bool TParticle::CheckJoinWithCSite(TParticle &other) {

@@ -26,7 +26,6 @@ int main() {
     const int GRID_LEN_X = 400;
     const int GRID_LEN_Y = 200;
 
-
     const int T_MAX = 500000;
     const int MSEC_WAIT = 0;
     const int VIEW = 50; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
@@ -113,15 +112,12 @@ int main() {
                      if (i.Spin == 5 ) monomer.rotate(315);
 
                      app.draw(monomer);*/
-
                 }
             }
-
             // Display Parts positions
             app.display();
             app.pollEvent(event);
             if (event.type == sf::Event::Closed) app.close();
-
         }
     }
     while (app.isOpen()) while (app.pollEvent(event)) if (event.type == sf::Event::Closed) app.close();
