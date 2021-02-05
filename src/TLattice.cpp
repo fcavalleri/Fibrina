@@ -1,14 +1,14 @@
 #include "TLattice.h"
 
-TLattice::TLattice(int pL) : L(pL), Grid(L, std::vector<GridElement>(L)), N(0)  //Initialize
+TLattice::TLattice(int pLx, int pLy) : Lx(pLx), Ly(pLy), Grid(Lx, std::vector<GridElement>(Ly)), N(0)  //Initialize
 {
     // Set static parameters for TParticle and TSite classes
-    TParticle::L = pL;
-    TSite::L = pL;
+    TParticle::Lx = pLx;
+    TParticle::Ly = pLy;
+    TSite::Lx = pLx;
+    TSite::Ly = pLy;
     TParticle::Lattice = this; //this è il puntatore all'istanza corrente della classe
-
 }
-
 
 TLattice::~TLattice() {
     //dtor
@@ -35,13 +35,13 @@ void TLattice::RandomFill(int pN) {
 void TLattice::SetForDLA() {
     Parts[0].ClearParticlePosition();
 
-    Parts[0].CSite.x = L/2;
-    Parts[0].CSite.y = L/2;
+    Parts[0].CSite.x = Lx/2;
+    Parts[0].CSite.y = Ly/2;
     Parts[0].Spin = 0;
-    Parts[0].LSite.x = L/2 -2;
-    Parts[0].LSite.y = L/2;
-    Parts[0].RSite.x = L/2 +2;
-    Parts[0].RSite.y = L/2;
+    Parts[0].LSite.x = Lx/2 -2;
+    Parts[0].LSite.y = Ly/2;
+    Parts[0].RSite.x = Lx/2 +2;
+    Parts[0].RSite.y = Ly/2;
     Parts[0].is_freeL = true;
     Parts[0].is_freeR = true;
     Parts[0].is_activeA = true;

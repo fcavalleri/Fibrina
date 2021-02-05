@@ -18,7 +18,7 @@ TSite::~TSite()
 void TSite::Translate(int dx, int dy)
 {
 
-x=(x+dx+L)%L; y=(y+dy+L)%L;
+x=(x+dx+Lx)%Lx; y=(y+dy+Ly)%Ly;
 
 }
 

@@ -13,7 +13,9 @@ class TSite
 
         //Class Members
         //! Linear dimension of the grid
-        inline static int L;
+        inline static int Lx;
+        inline static int Ly;
+
         //! Site coordinates.
         //! Be careful: this are lattice coordinate that sould be rescalated in real world by...
         int x, y;

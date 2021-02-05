@@ -14,19 +14,18 @@ class TLattice
 {
     public:
         //! Constructor needs Lattice linear dimension (pL)
-        TLattice(int pL);
+        TLattice(int pLx, int pLy);
         virtual ~TLattice();
 
         //Class Members
         //! We have only one istance of this class, so L and N are a members
-        const int L;
+        const int Lx;
+        const int Ly;
         int N;
         //! The Lattice own as a member the vector of All Parts
         std::vector<TParticle> Parts;
 
         //Class Methods
-        //! Set the Grapich Context
-        void SetGraphicContext(sf::RenderWindow *pApp);
         //! Fill the Lattice whit pN Particles
         void RandomFill(int pN);
         //! Set for a DLA simulation

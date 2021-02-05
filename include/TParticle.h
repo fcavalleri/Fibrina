@@ -14,7 +14,8 @@ class TParticle
 {
     public:
         //! Linear dimension of the grid
-        inline static int L;
+        inline static int Lx;
+        inline static int Ly;
         //! Rates for traslation and rotations
         inline static double ZY_ROT_RATE;
         inline static double X_ROT_RATE;

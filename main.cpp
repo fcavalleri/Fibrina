@@ -22,12 +22,14 @@
 int main() {
 
 // Define system parameters
-    const int N_PART = 100;
-    const int GRID_LEN = 300;
+    const int N_PART = 50;
+    const int GRID_LEN_X = 400;
+    const int GRID_LEN_Y = 200;
+
 
     const int T_MAX = 500000;
     const int MSEC_WAIT = 0;
-    const int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+    const int VIEW = 50; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
     const double ZY_ROT_RATE = 1;
     const double X_ROT_RATE = 0.66;
@@ -36,14 +38,14 @@ int main() {
     const double LEN_WIDHT_RATIO = 0.1;
 
     const double ACT_TRESH = 0.0012;
-    const double CLO_TRESH = 0.001;
+    const double CLO_TRESH = 0.01;
 
 // Create the Render Window
-    sf::RenderWindow app(sf::VideoMode(GRID_LEN, GRID_LEN), "Simulazione Aggregazione Fibrina");
+    sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
     sf::Event event{};
 
 // Create the Lattice
-    TLattice Lattice{GRID_LEN};
+    TLattice Lattice{GRID_LEN_X,GRID_LEN_Y};
 
 // Set Particle's diffusion parameters
     TParticle::ZY_ROT_RATE = ZY_ROT_RATE;
@@ -55,7 +57,7 @@ int main() {
     TParticle::CLO_TRESH = CLO_TRESH;
 
 // Fill the Lattice with the Particles
-    usleep(3*1000 * 1000);
+    usleep(3 * 1000 * 1000);
     Lattice.RandomFill(N_PART);
 
 // Set for the DLA simulation
@@ -74,7 +76,7 @@ int main() {
 
         if (t % VIEW == 0) {
             for (auto &i : Lattice.Parts) {
-                if (i.mob!=TParticle::MobState::FREE) {
+                if (i.mob != TParticle::MobState::FREE) {
                     //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
 
                     //POINTS
@@ -98,19 +100,19 @@ int main() {
                     app.draw(monomer, 2, sf::Lines);
 
                     //RECTANGLES
-                   /* sf::RectangleShape monomer(sf::Vector2f(3.7,3.7*LEN_WIDHT_RATIO));
-                    //SetDrawMonomerSpin(&monomer);
+                    /* sf::RectangleShape monomer(sf::Vector2f(3.7,3.7*LEN_WIDHT_RATIO));
+                     //SetDrawMonomerSpin(&monomer);
 
-                    monomer.setOrigin(monomer.getSize()*float(0.5));
-                    monomer.setPosition(sf::Vector2f(i.CSite.x, i.CSite.y));
-                    if (i.Spin == 0)
-                    if (i.Spin == 1 ) monomer.rotate(45);
-                    if (i.Spin == 2 ) monomer.rotate(135);
-                    if (i.Spin == 3 ) monomer.rotate(180);
-                    if (i.Spin == 4 ) monomer.rotate(225);
-                    if (i.Spin == 5 ) monomer.rotate(315);
+                     monomer.setOrigin(monomer.getSize()*float(0.5));
+                     monomer.setPosition(sf::Vector2f(i.CSite.x, i.CSite.y));
+                     if (i.Spin == 0)
+                     if (i.Spin == 1 ) monomer.rotate(45);
+                     if (i.Spin == 2 ) monomer.rotate(135);
+                     if (i.Spin == 3 ) monomer.rotate(180);
+                     if (i.Spin == 4 ) monomer.rotate(225);
+                     if (i.Spin == 5 ) monomer.rotate(315);
 
-                    app.draw(monomer);*/
+                     app.draw(monomer);*/
 
                 }
             }

@@ -107,12 +107,12 @@ void TParticle::RandomizePosition() {
 
 // Randomize initial coordinates of the Central Site
     int yc;
-    int xc = randM(L);
+    int xc = randM(Lx);
 // On our triangular lattice, (x+y) must be always even
     if (xc % 2 == 0)
-        yc = (randM(L) * 2) % L;
+        yc = (randM(Ly) * 2) % Ly;
     else
-        yc = (randM(L) * 2 + 1) % L;
+        yc = (randM(Ly) * 2 + 1) % Ly;
 
     CSite = TSite(xc, yc);
 
@@ -124,8 +124,8 @@ void TParticle::RandomizeOrientation() {
 }
 
 void TParticle::RecalcExtSites() {
-    RSite = TSite((CSite.x + dx[Spin] + L) % L, (CSite.y + dy[Spin] + L) % L);
-    LSite = TSite((CSite.x - dx[Spin] + L) % L, (CSite.y - dy[Spin] + L) % L);
+    RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
+    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Lx) % Lx);
 }
 
 bool TParticle::CheckJoinWithCSite(TParticle &other) {
@@ -157,7 +157,6 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
             is_activeA = false;
             other.is_freeR = false;
             std::cout << "YL at his A of " << *this << " with " << other << std::endl;
-            Lattice->RandomFill(1);
             return true;
         }
     }
@@ -176,7 +175,6 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
             other.is_freeL = false;
             other.is_activeB = false;
             std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
-            Lattice->RandomFill(1);
             return true;
         }
         //YL at my B
@@ -188,7 +186,6 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
             is_activeB = false;
             other.is_freeL = false;
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
-            Lattice->RandomFill(1);
             return true;
         }
     }
