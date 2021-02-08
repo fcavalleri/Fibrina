@@ -22,13 +22,13 @@
 int main() {
 
 // Define system parameters
-  const int N_PART = 50;
-  const int GRID_LEN_X = 400;
-  const int GRID_LEN_Y = 200;
+  const int N_PART = 70;
+  const int GRID_LEN_X = 350;
+  const int GRID_LEN_Y = 250;
 
   const int T_MAX = 500000;
   const int MSEC_WAIT = 0;
-  const int VIEW = 50; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+  const int VIEW = 200; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
   const double ZY_ROT_RATE = 1;
   const double X_ROT_RATE = 0.66;
@@ -38,6 +38,7 @@ int main() {
 
   const double ACT_TRESH = 0.0012;
   const double CLO_TRESH = 0.01;
+  const double DL2YL_RATE = 0.5;
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
@@ -53,6 +54,7 @@ int main() {
 // Set Particle's Activation and Closing Treshold
   TParticle::ACT_TRESH = ACT_TRESH;
   TParticle::CLO_TRESH = CLO_TRESH;
+  TParticle::DL2YL_RATE = DL2YL_RATE;
 
 // Fill the Lattice with the Particles
   usleep(3 * 1000 * 1000);
@@ -86,7 +88,6 @@ int main() {
 
           sf::Vertex monomeroD = sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y), sf::Color::White);
           app.draw(&monomeroD, 1, sf::Points);*/
-
 
           //LINES
           sf::Vertex monomer[] =

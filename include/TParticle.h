@@ -23,7 +23,7 @@ class TParticle
         //! Treshold of activation for central sites A e B
         inline static double ACT_TRESH;
         inline static double CLO_TRESH;
-
+        inline static double DL2YL_RATE;
         //! Pointer to the Lattice shared by all Parts
         inline static TLattice *Lattice;
 
@@ -94,7 +94,15 @@ class TParticle
         bool CheckJoinWithLSite(TParticle &pPart);
         bool CheckJoinWithRSite(TParticle &pPart);
 
-        //! If it's possible a closure over the input particle, occurs
+        //! Link realization sintaxis
+        void DLAs(TParticle &pPart);
+        void DLBs(TParticle &pPart);
+        void YLL(TParticle &pPart);
+        void YLB(TParticle &pPart);
+        void YLA(TParticle &pPart);
+        void YLR(TParticle &pPart);
+
+    //! If it's possible a closure over the input particle, occurs
         void CheckClose();
         void ChekCloseYLA(TParticle &pPart);
         void ChekCloseYLB(TParticle &pPart);

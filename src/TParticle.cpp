@@ -100,6 +100,7 @@ void TParticle::FreeMove() {
     if (ranMT() < X_ROT_RATE) {
         Spin = (Spin + 3) % 6;
         RecalcExtSites();
+        //remember that if A and B activation is't simultaneous is_activeA and is_activeB must swap
     }
 }
 
@@ -134,28 +135,15 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
 
     if (CSite == other.RSite) {
         //DL at As
-        if (other.Spin == (Spin + 3) % 6 && is_activeA && is_freeR && other.is_freeR && other.is_activeA) {
-            mob = MobState::BLOCKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[2] = other.Index;
-            other.LinkedWith[3] = Index;
-            LinkedWith[3] = other.Index;
-            other.LinkedWith[2] = Index;
-            is_activeA = false;
-            is_freeR = false;
-            other.is_freeR = false;
-            other.is_activeA = false;
+        if (other.Spin == (Spin + 3) % 6 && is_activeA && other.is_freeR && other.is_activeA && is_freeR){
+            DLAs(other);
             std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
             return true;
         }
+
         //YL at my A
         if (other.Spin == (Spin + 4) % 6 && is_activeA && other.is_freeR) {
-            mob = MobState::LINKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[2] = other.Index;
-            other.LinkedWith[3] = Index;
-            is_activeA = false;
-            other.is_freeR = false;
+            YLA(other);
             std::cout << "YL at his A of " << *this << " with " << other << std::endl;
             return true;
         }
@@ -164,27 +152,13 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
     if (CSite == other.LSite) {
         //DL at Bs
         if (other.Spin == (Spin + 3) % 6 && is_activeB && is_freeL && other.is_freeL && other.is_activeB) {
-            mob = MobState::BLOCKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[0] = other.Index;
-            other.LinkedWith[1] = Index;
-            LinkedWith[1] = other.Index;
-            other.LinkedWith[0] = Index;
-            is_activeB = false;
-            is_freeL = false;
-            other.is_freeL = false;
-            other.is_activeB = false;
+            DLBs(other);
             std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
             return true;
         }
         //YL at my B
         if (other.Spin == (Spin + 2) % 6 && is_activeB && other.is_freeL) {
-            mob = MobState::LINKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[1] = other.Index;
-            other.LinkedWith[0] = Index;
-            is_activeB = false;
-            other.is_freeL = false;
+            YLB(other);
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             return true;
         }
@@ -199,12 +173,7 @@ bool TParticle::CheckJoinWithRSite(TParticle &other) {
     if (RSite == other.CSite) {
         //YL at other A
         if (other.Spin == (Spin + 2) % 6 && is_freeR && other.is_activeA) {
-            mob = MobState::LINKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[3] = other.Index;
-            other.LinkedWith[2] = Index;
-            is_freeR = false;
-            other.is_activeA = false;
+            YLR(other);
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             return true;
         }
@@ -219,18 +188,75 @@ bool TParticle::CheckJoinWithLSite(TParticle &other) {
     if (LSite == other.CSite) {
         //YLL (at other B)
         if (other.Spin == (Spin + 4) % 6 && is_freeL && other.is_activeB) {
-            mob = MobState::LINKED;
-            other.mob = MobState::BLOCKED;
-            LinkedWith[0] = other.Index;
-            other.LinkedWith[1] = Index;
-            is_freeL = false;
-            other.is_activeB = false;
+            YLL(other);
             std::cout << "YL at other B of " << *this << " with " << other << std::endl;
             return true;
         }
     }
 return false;
 }
+
+void TParticle::DLAs(TParticle &other){
+    mob = MobState::BLOCKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[2] = other.Index;
+    other.LinkedWith[3] = Index;
+    LinkedWith[3] = other.Index;
+    other.LinkedWith[2] = Index;
+    is_activeA = false;
+    is_freeR = false;
+    other.is_freeR = false;
+    other.is_activeA = false;
+}
+
+void TParticle::DLBs(TParticle &other){
+    mob = MobState::BLOCKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[0] = other.Index;
+    other.LinkedWith[1] = Index;
+    LinkedWith[1] = other.Index;
+    other.LinkedWith[0] = Index;
+    is_activeB = false;
+    is_freeL = false;
+    other.is_freeL = false;
+    other.is_activeB = false;
+}
+
+void TParticle::YLL(TParticle &other){
+    mob = MobState::LINKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[0] = other.Index;
+    other.LinkedWith[1] = Index;
+    is_freeL = false;
+    other.is_activeB = false;
+}
+
+void TParticle::YLB(TParticle &other){
+    mob = MobState::LINKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[1] = other.Index;
+    other.LinkedWith[0] = Index;
+    is_activeB = false;
+    other.is_freeL = false;
+}
+void TParticle::YLA(TParticle &other){
+    mob = MobState::LINKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[2] = other.Index;
+    other.LinkedWith[3] = Index;
+    is_activeA = false;
+    other.is_freeR = false;
+}
+
+void TParticle::YLR(TParticle &other){
+    mob = MobState::LINKED;
+    other.mob = MobState::BLOCKED;
+    LinkedWith[3] = other.Index;
+    other.LinkedWith[2] = Index;
+    is_freeR = false;
+    other.is_activeA = false;
+}
+
 
 void TParticle::CheckClose() {
     if (!is_freeL) {
