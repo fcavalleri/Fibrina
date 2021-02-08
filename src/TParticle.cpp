@@ -133,31 +133,41 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
 
     if (other.mob == MobState::FREE) return false;
 
-    if (CSite == other.RSite) {
-        //DL at As
-        if (other.Spin == (Spin + 3) % 6 && is_activeA && other.is_freeR && other.is_activeA && is_freeR){
-            DLAs(other);
-            std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
-            return true;
+    if (CSite == other.RSite && is_activeA && other.is_freeR) {
+
+        if (other.Spin == (Spin + 3) % 6){
+            //whit a rate DL2YL_RATE, switch to YLA
+            if (ranMT()<DL2YL_RATE) {Spin = (Spin - 1) % 6; YLA(other); return true;}
+            //otherwise, check also the other site and if possible realize DLAs
+            if (other.is_activeA && is_freeR){
+                DLAs(other);
+                std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
+                return true;
+            }
         }
 
         //YL at my A
-        if (other.Spin == (Spin + 4) % 6 && is_activeA && other.is_freeR) {
+        if (other.Spin == (Spin + 4) % 6){
             YLA(other);
             std::cout << "YL at his A of " << *this << " with " << other << std::endl;
             return true;
         }
     }
 
-    if (CSite == other.LSite) {
+    if (CSite == other.LSite && is_activeB && other.is_freeL) {
         //DL at Bs
-        if (other.Spin == (Spin + 3) % 6 && is_activeB && is_freeL && other.is_freeL && other.is_activeB) {
-            DLBs(other);
-            std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
-            return true;
+        if (other.Spin == (Spin + 3) % 6) {
+            //whit a rate DL2YL_RATE, switch to YLB
+            if (ranMT()<DL2YL_RATE) {Spin = (Spin + 1) % 6; YLB(other); return true;}
+            //otherwise, check also the other site and if possible realize DLBs
+            if (is_freeL && other.is_activeB) {
+                DLBs(other);
+                std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
+                return true;
+            }
         }
         //YL at my B
-        if (other.Spin == (Spin + 2) % 6 && is_activeB && other.is_freeL) {
+        if (other.Spin == (Spin + 2) % 6) {
             YLB(other);
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             return true;
@@ -170,13 +180,11 @@ bool TParticle::CheckJoinWithRSite(TParticle &other) {
 
     if (other.mob == MobState::FREE) return false;
 
-    if (RSite == other.CSite) {
-        //YL at other A
-        if (other.Spin == (Spin + 2) % 6 && is_freeR && other.is_activeA) {
+    //YLR (at other A)
+    if (RSite == other.CSite && other.Spin == (Spin + 2) % 6 && is_freeR && other.is_activeA) {
             YLR(other);
             std::cout << "YL at other A of " << *this << " with " << other << std::endl;
             return true;
-        }
     }
     return false;
 }
@@ -184,14 +192,11 @@ bool TParticle::CheckJoinWithRSite(TParticle &other) {
 bool TParticle::CheckJoinWithLSite(TParticle &other) {
 
     if (other.mob == MobState::FREE) return false;
-
-    if (LSite == other.CSite) {
-        //YLL (at other B)
-        if (other.Spin == (Spin + 4) % 6 && is_freeL && other.is_activeB) {
+    //YLL (at other B)
+    if (LSite == other.CSite && other.Spin == (Spin + 4) % 6 && is_freeL && other.is_activeB) {
             YLL(other);
             std::cout << "YL at other B of " << *this << " with " << other << std::endl;
             return true;
-        }
     }
 return false;
 }

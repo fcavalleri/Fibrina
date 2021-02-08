@@ -38,7 +38,7 @@ int main() {
 
   const double ACT_TRESH = 0.0012;
   const double CLO_TRESH = 0.01;
-  const double DL2YL_RATE = 0.5;
+  const double DL2YL_RATE = 1;
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
