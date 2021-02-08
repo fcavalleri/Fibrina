@@ -22,13 +22,13 @@
 int main() {
 
 // Define system parameters
-  const int N_PART = 70;
-  const int GRID_LEN_X = 350;
-  const int GRID_LEN_Y = 250;
+  const int N_PART = 100;
+  const int GRID_LEN_X = 450;
+  const int GRID_LEN_Y = 350;
 
   const int T_MAX = 500000;
   const int MSEC_WAIT = 0;
-  const int VIEW = 200; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+  const int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
   const double ZY_ROT_RATE = 1;
   const double X_ROT_RATE = 0.66;
@@ -37,8 +37,11 @@ int main() {
   const double LEN_WIDHT_RATIO = 0.1;
 
   const double ACT_TRESH = 0.0012;
-  const double CLO_TRESH = 0.01;
-  const double DL2YL_RATE = 1;
+  const double CLO_TRESH = 0.001;
+  const double DL2YL_RATE = 0;
+
+  // Files where save analysis
+  FILE*fp = fopen("NfixRg","w");
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
@@ -63,18 +66,24 @@ int main() {
 // Set for the DLA simulation
   Lattice.SetForDLA();
 
-//Time Evolution
+// Time Evolution
   for (int t = 0; t < T_MAX; ++t) {
 
     // Possibility of slowing down the simulation
     usleep(MSEC_WAIT * 1000);
+
     // Clear between each time step
     app.clear();
 
     // Ask the Lattice to Evolve all the System by a time step
     Lattice.Evolve();
 
+    //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
+        int Nfix{0};
+        double Rg{0};
+        double xmean{0};
+        double ymean{0};
       for (auto &i : Lattice.Parts) {
         if (i.mob != TParticle::MobState::FREE) {
           //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
@@ -112,8 +121,29 @@ int main() {
            if (i.Spin == 5 ) monomer.rotate(315);
 
            app.draw(monomer);*/
+
+          // Compute baricenter
+          xmean=xmean+i.CSite.x*0.5;
+          ymean=ymean+i.CSite.y*0.5*sqrt(3);
+          Nfix=Nfix+1;
         }
       }
+
+      xmean=xmean/Nfix;
+      ymean=ymean/Nfix;
+
+        // Compute Rg^2
+        for (auto &i : Lattice.Parts) {
+            if (i.mob != TParticle::MobState::FREE) {
+                Rg=Rg+(i.CSite.x*0.5-xmean)*(i.CSite.x*0.5 -xmean) + (i.CSite.y*0.5*sqrt(3) -ymean)*(i.CSite.y*0.5*sqrt(3) -ymean);
+            }
+        }
+
+        Rg=sqrt(Rg/Nfix);
+
+        fprintf(fp,"%e \t %d \n",Rg,Nfix);
+        fflush(fp);
+
       // Display Parts positions
       app.display();
       for (sf::Event event; app.pollEvent(event);)
@@ -121,6 +151,8 @@ int main() {
           app.close();
           return 0;
         }
+
+
     }
   }
   while (app.isOpen()) for (sf::Event event; app.pollEvent(event);) if (event.type == sf::Event::Closed) app.close();
