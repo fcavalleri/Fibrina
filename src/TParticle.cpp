@@ -1,6 +1,6 @@
 #include "TParticle.h"
 
-TParticle::TParticle(int pIndex) : Index(pIndex), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
+TParticle::TParticle(int pIndex) : Index(pIndex), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}, nYL(0), nDL(0)/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
 {
     RandomizePosition();
     RandomizeOrientation();
@@ -76,6 +76,30 @@ bool TParticle::Evolve() {
     return JustJoined;
 }
 
+void TParticle::RandomizePosition() {
+
+// Randomize initial coordinates of the Central Site
+    int yc;
+    int xc = randM(Lx);
+// On our triangular lattice, (x+y) must be always even
+    if (xc % 2 == 0)
+        yc = (randM(Ly) * 2) % Ly;
+    else
+        yc = (randM(Ly) * 2 + 1) % Ly;
+
+    CSite = TSite(xc, yc);
+}
+
+void TParticle::RandomizeOrientation() {
+    Spin = randM(6);
+    RecalcExtSites();
+}
+
+void TParticle::RecalcExtSites() {
+    RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
+    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
+}
+
 void TParticle::TryActivateAB() {
     if (ranMT() > ACT_TRESH) {is_activeA = true; is_activeB = true;}
 }
@@ -104,31 +128,6 @@ void TParticle::FreeMove() {
         RecalcExtSites();
         //remember that if A and B activation is't simultaneous is_activeA and is_activeB must swap
     }
-}
-
-void TParticle::RandomizePosition() {
-
-// Randomize initial coordinates of the Central Site
-    int yc;
-    int xc = randM(Lx);
-// On our triangular lattice, (x+y) must be always even
-    if (xc % 2 == 0)
-        yc = (randM(Ly) * 2) % Ly;
-    else
-        yc = (randM(Ly) * 2 + 1) % Ly;
-
-    CSite = TSite(xc, yc);
-
-}
-
-void TParticle::RandomizeOrientation() {
-    Spin = randM(6);
-    RecalcExtSites();
-}
-
-void TParticle::RecalcExtSites() {
-    RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
-    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
 }
 
 bool TParticle::CheckJoinWithCSite(TParticle &other) {
@@ -290,7 +289,6 @@ void TParticle::CheckClose() {
     }
 }
 
-
 bool TParticle::ChekCloseYLL(TParticle &other) {
     if (!is_activeB || !other.is_freeL) return false;
     if (ranMT() > CLO_TRESH) return false;
@@ -389,7 +387,7 @@ void TParticle::ClearParticlePosition() {
 }
 
 int TParticle::GetYL() {
-return nYL;
+    return nYL;
 }
 
 int TParticle::GetDL() {

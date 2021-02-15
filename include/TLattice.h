@@ -24,8 +24,6 @@ class TLattice
         int N;
         //! The Lattice own as a member the vector of All Parts
         std::vector<TParticle> Parts;
-        //! The Lattice count how may YL and DL links there are
-        int nYL, nDL;
 
         //Class Methods
         //! Fill the Lattice whit pN Particles
@@ -58,6 +56,8 @@ class TLattice
 
         //! Here we don't kwon yet N, so we initializate a pointer to a integer array
         std::vector<std::vector<GridElement>> Grid;
+        //! The Lattice count how may YL and DL links there are
+        int nYL, nDL;
 
 };
 
