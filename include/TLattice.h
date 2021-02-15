@@ -24,6 +24,8 @@ class TLattice
         int N;
         //! The Lattice own as a member the vector of All Parts
         std::vector<TParticle> Parts;
+        //! The Lattice count how may YL and DL links there are
+        int nYL, nDL;
 
         //Class Methods
         //! Fill the Lattice whit pN Particles
@@ -46,6 +48,9 @@ class TLattice
         GridElement& GetSiteIndexes(TSite &pSite);
         //! Get the particle with a site in pSite (if there is any particle here)
         TParticle& GetParticle(int pIndex);
+        //! Get current number of YL and DL links
+        int GetNYL();
+        int GetNDL();
 
     protected:
 

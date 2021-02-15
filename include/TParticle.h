@@ -62,8 +62,11 @@ class TParticle
         void SetParticlePosition();
         //! Clear the Lattice where the particle was before moving
         void ClearParticlePosition();
+        //! Get changing in linking state
+        int GetYL();
+        int GetDL();
 
-        friend std::ostream& operator <<(std::ostream& os, const TParticle& me);  //passo l'indirizzo ma non può modificare la variabile (const)
+    friend std::ostream& operator <<(std::ostream& os, const TParticle& me);  //passo l'indirizzo ma non può modificare la variabile (const)
 
     protected:
 
@@ -75,6 +78,12 @@ class TParticle
         static constexpr int dy[6]={0,1,1,0,-1,-1};
         //! Possibility of a planar rotation (clockwise or anticlockwise)
         static constexpr int R[2]={-1,1};
+
+        //Class Internal properties
+        //! + 1 if a YL is realized and - 1 if is losed
+        int nYL;
+        //! + 1 if a YL is realized and - 1 if is losed
+        int nDL;
 
         //Class Internal Methods
         //! Give random position at the CSite of the monomer
@@ -104,10 +113,10 @@ class TParticle
 
     //! If it's possible a closure over the input particle, occurs
         void CheckClose();
-        void ChekCloseYLA(TParticle &pPart);
-        void ChekCloseYLB(TParticle &pPart);
-        void ChekCloseYLR(TParticle &pPart);
-        void ChekCloseYLL(TParticle &pPart);
+        bool ChekCloseYLA(TParticle &pPart);
+        bool ChekCloseYLB(TParticle &pPart);
+        bool ChekCloseYLR(TParticle &pPart);
+        bool ChekCloseYLL(TParticle &pPart);
 
 };
 

@@ -7,6 +7,7 @@
 #include "TParticle.h"
 #include <vector>
 #include <iostream>
+#include <fstream>
 
 /*void DrawParticle(TParticle &i, sf::RenderWindow *app) {
     sf::Vertex monomeroC = sf::Vertex(sf::Vector2f(i.CSite.x, i.CSite.y), sf::Color::Red);
@@ -41,7 +42,8 @@ int main() {
   const double DL2YL_RATE = 0;
 
   // Files where save analysis
-  FILE*fp = fopen("NfixRg","w");
+  FILE*fp1 = fopen("NfixRg","w");
+  /*FILE*fp2 = fopen("nYLnDL","w");*/
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
@@ -80,6 +82,10 @@ int main() {
 
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
+
+        /*fprintf(fp2,"%d \t %d \n",Lattice.GetNYL(),Lattice.GetNDL());
+        fflush(fp2);*/
+
         int Nfix{0};
         double Rg{0};
         double xmean{0};
@@ -141,18 +147,23 @@ int main() {
 
         Rg=sqrt(Rg/Nfix);
 
-        fprintf(fp,"%e \t %d \n",Rg,Nfix);
-        fflush(fp);
+        /*std::string filename("output_Lx");
+        filename.append(std::to_string(GRID_LEN_X)).append("_Ly")
+                .append(std::to_string(GRID_LEN_Y)).append(".txt");
+        std::ofstream output(filename);
+        output << Rg << "\t" << Nfix << "\n";*/
+
+        fprintf(fp1,"%e \t %d \n",Rg,Nfix);
+        fflush(fp1);
 
       // Display Parts positions
       app.display();
       for (sf::Event event; app.pollEvent(event);)
+
         if (event.type == sf::Event::Closed) {
           app.close();
           return 0;
         }
-
-
     }
   }
   while (app.isOpen()) for (sf::Event event; app.pollEvent(event);) if (event.type == sf::Event::Closed) app.close();
