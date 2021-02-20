@@ -1,6 +1,6 @@
 #include "TLattice.h"
 
-TLattice::TLattice(int pLx, int pLy) : Lx(pLx), Ly(pLy), Grid(Lx, std::vector<GridElement>(Ly)), N(0)  //Initialize
+TLattice::TLattice(int pLx, int pLy) : Lx(pLx), Ly(pLy), Grid(Lx, std::vector<GridElement>(Ly)), N(0), nYL(0), nDL(0)  //Initialize
 {
     // Set static parameters for TParticle and TSite classes
     TParticle::Lx = pLx;
@@ -47,7 +47,6 @@ void TLattice::SetForDLA() {
     Parts[0].is_activeA = true;
     Parts[0].is_activeB = true;
     Parts[0].mob = TParticle::MobState::BLOCKED;
-
 
     Parts[0].SetParticlePosition();
 }

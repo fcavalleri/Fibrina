@@ -212,6 +212,7 @@ void TParticle::DLAs(TParticle &other){
     is_freeR = false;
     other.is_freeR = false;
     other.is_activeA = false;
+    Lattice->nDL++;
 }
 
 void TParticle::DLBs(TParticle &other){
@@ -225,6 +226,7 @@ void TParticle::DLBs(TParticle &other){
     is_freeL = false;
     other.is_freeL = false;
     other.is_activeB = false;
+    Lattice->nDL++;
 }
 
 void TParticle::YLL(TParticle &other){
@@ -234,6 +236,7 @@ void TParticle::YLL(TParticle &other){
     other.LinkedWith[1] = Index;
     is_freeL = false;
     other.is_activeB = false;
+    Lattice->nYL++;
 }
 
 void TParticle::YLB(TParticle &other){
@@ -251,6 +254,7 @@ void TParticle::YLA(TParticle &other){
     other.LinkedWith[3] = Index;
     is_activeA = false;
     other.is_freeR = false;
+    Lattice->nYL++;
 }
 
 void TParticle::YLR(TParticle &other){
@@ -260,25 +264,22 @@ void TParticle::YLR(TParticle &other){
     other.LinkedWith[2] = Index;
     is_freeR = false;
     other.is_activeA = false;
+    Lattice->nYL++;
 }
 
 
 void TParticle::CheckClose() {
     if (!is_freeL) {
         ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
-        return;
     }
     if (!is_activeB) {
         ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
-        return;
     }
     if (!is_activeA) {
         ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
-        return;
     }
     if (!is_freeR) {
         ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
-        return;
     }
 }
 
@@ -299,6 +300,8 @@ void TParticle::ChekCloseYLL(TParticle &other) {
 
     SetParticlePosition();
 
+    Lattice->nYL--; Lattice->nDL++;
+
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 }
 
@@ -317,6 +320,8 @@ void TParticle::ChekCloseYLB(TParticle &other) {
 
     SetParticlePosition();
 
+    Lattice->nYL--; Lattice->nDL++;
+
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 }
 
@@ -334,6 +339,8 @@ void TParticle::ChekCloseYLA(TParticle &other) {
     other.mob = MobState::BLOCKED;
 
     SetParticlePosition();
+
+    Lattice->nYL--; Lattice->nDL++;
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 }
@@ -354,9 +361,10 @@ void TParticle::ChekCloseYLR(TParticle &other) {
 
     SetParticlePosition();
 
+    Lattice->nYL--; Lattice->nDL++;
+
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
 }
-
 
 void TParticle::SetParticlePosition() {
 //Set Site by Site through the pointer at the shared Lattice

@@ -22,6 +22,8 @@ class TLattice
         const int Lx;
         const int Ly;
         int N;
+        //!
+        int nYL, nDL;
         //! The Lattice own as a member the vector of All Parts
         std::vector<TParticle> Parts;
 
