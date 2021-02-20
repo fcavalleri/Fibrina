@@ -1,6 +1,6 @@
 #include "TParticle.h"
 
-TParticle::TParticle(int pIndex) : Index(pIndex), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}, nYL(0), nDL(0)/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
+TParticle::TParticle(int pIndex) : Index(pIndex), is_freeL(true), is_freeR(true), LinkedWith{-1,-1,-1,-1}/* se aggiungo :is_freeL(true) lo inizializza direttamente vero*/
 {
     RandomizePosition();
     RandomizeOrientation();
@@ -30,8 +30,6 @@ TParticle::~TParticle() {
 bool TParticle::Evolve() {
 
     bool JustJoined=false;
-    nYL=0;
-    nDL=0;
 
     switch (mob) {
         case MobState::FREE: {
@@ -76,30 +74,6 @@ bool TParticle::Evolve() {
     return JustJoined;
 }
 
-void TParticle::RandomizePosition() {
-
-// Randomize initial coordinates of the Central Site
-    int yc;
-    int xc = randM(Lx);
-// On our triangular lattice, (x+y) must be always even
-    if (xc % 2 == 0)
-        yc = (randM(Ly) * 2) % Ly;
-    else
-        yc = (randM(Ly) * 2 + 1) % Ly;
-
-    CSite = TSite(xc, yc);
-}
-
-void TParticle::RandomizeOrientation() {
-    Spin = randM(6);
-    RecalcExtSites();
-}
-
-void TParticle::RecalcExtSites() {
-    RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
-    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
-}
-
 void TParticle::TryActivateAB() {
     if (ranMT() > ACT_TRESH) {is_activeA = true; is_activeB = true;}
 }
@@ -128,6 +102,31 @@ void TParticle::FreeMove() {
         RecalcExtSites();
         //remember that if A and B activation is't simultaneous is_activeA and is_activeB must swap
     }
+}
+
+void TParticle::RandomizePosition() {
+
+// Randomize initial coordinates of the Central Site
+    int yc;
+    int xc = randM(Lx);
+// On our triangular lattice, (x+y) must be always even
+    if (xc % 2 == 0)
+        yc = (randM(Ly) * 2) % Ly;
+    else
+        yc = (randM(Ly) * 2 + 1) % Ly;
+
+    CSite = TSite(xc, yc);
+
+}
+
+void TParticle::RandomizeOrientation() {
+    Spin = randM(6);
+    RecalcExtSites();
+}
+
+void TParticle::RecalcExtSites() {
+    RSite = TSite((CSite.x + dx[Spin] + Lx) % Lx, (CSite.y + dy[Spin] + Ly) % Ly);
+    LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
 }
 
 bool TParticle::CheckJoinWithCSite(TParticle &other) {
@@ -213,7 +212,6 @@ void TParticle::DLAs(TParticle &other){
     is_freeR = false;
     other.is_freeR = false;
     other.is_activeA = false;
-    nDL+=1;
 }
 
 void TParticle::DLBs(TParticle &other){
@@ -227,7 +225,6 @@ void TParticle::DLBs(TParticle &other){
     is_freeL = false;
     other.is_freeL = false;
     other.is_activeB = false;
-    nDL+=1;
 }
 
 void TParticle::YLL(TParticle &other){
@@ -237,7 +234,6 @@ void TParticle::YLL(TParticle &other){
     other.LinkedWith[1] = Index;
     is_freeL = false;
     other.is_activeB = false;
-    nYL+=1;
 }
 
 void TParticle::YLB(TParticle &other){
@@ -247,7 +243,6 @@ void TParticle::YLB(TParticle &other){
     other.LinkedWith[0] = Index;
     is_activeB = false;
     other.is_freeL = false;
-    nYL+=1;
 }
 void TParticle::YLA(TParticle &other){
     mob = MobState::LINKED;
@@ -256,7 +251,6 @@ void TParticle::YLA(TParticle &other){
     other.LinkedWith[3] = Index;
     is_activeA = false;
     other.is_freeR = false;
-    nYL+=1;
 }
 
 void TParticle::YLR(TParticle &other){
@@ -266,32 +260,32 @@ void TParticle::YLR(TParticle &other){
     other.LinkedWith[2] = Index;
     is_freeR = false;
     other.is_activeA = false;
-    nYL+=1;
 }
 
 
 void TParticle::CheckClose() {
     if (!is_freeL) {
-        if (ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]))) {nYL-=1; nDL+=1;}
+        ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
         return;
     }
     if (!is_activeB) {
-        if (ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]))) {nYL-=1; nDL+=1;}
+        ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
         return;
     }
     if (!is_activeA) {
-        if (ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]))) {nYL-=1; nDL+=1;};
+        ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
         return;
     }
     if (!is_freeR) {
-        if (ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]))) {nYL-=1; nDL+=1;};
+        ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
         return;
     }
 }
 
-bool TParticle::ChekCloseYLL(TParticle &other) {
-    if (!is_activeB || !other.is_freeL) return false;
-    if (ranMT() > CLO_TRESH) return false;
+
+void TParticle::ChekCloseYLL(TParticle &other) {
+    if (!is_activeB || !other.is_freeL) return;
+    if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
@@ -306,13 +300,11 @@ bool TParticle::ChekCloseYLL(TParticle &other) {
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
-    return true;
 }
 
-bool TParticle::ChekCloseYLB(TParticle &other) {
-    if (!is_freeL || !other.is_activeB) return false;
-    if (ranMT() > CLO_TRESH) return false;
+void TParticle::ChekCloseYLB(TParticle &other) {
+    if (!is_freeL || !other.is_activeB) return;
+    if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
@@ -326,13 +318,11 @@ bool TParticle::ChekCloseYLB(TParticle &other) {
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
-    return true;
 }
 
-bool TParticle::ChekCloseYLA(TParticle &other) {
-    if (!is_freeR || !other.is_activeA) return false;
-    if (ranMT() > CLO_TRESH) return false;
+void TParticle::ChekCloseYLA(TParticle &other) {
+    if (!is_freeR || !other.is_activeA) return;
+    if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
@@ -346,13 +336,11 @@ bool TParticle::ChekCloseYLA(TParticle &other) {
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
-    return true;
 }
 
-bool TParticle::ChekCloseYLR(TParticle &other) {
-    if (!is_activeA || !other.is_freeR) return false;  //first check if there are closing conditions
-    if (ranMT() > CLO_TRESH) return false; //if there are, close with a rate CLO_RATE
+void TParticle::ChekCloseYLR(TParticle &other) {
+    if (!is_activeA || !other.is_freeR) return;  //first check if there are closing conditions
+    if (ranMT() > CLO_TRESH) return; //if there are, close with a rate CLO_RATE
 
     ClearParticlePosition();
 
@@ -367,8 +355,6 @@ bool TParticle::ChekCloseYLR(TParticle &other) {
     SetParticlePosition();
 
     std::cout << "Closing! Of " << *this << " over " << other << std::endl;
-
-    return true;
 }
 
 
@@ -386,20 +372,12 @@ void TParticle::ClearParticlePosition() {
     Lattice->ClearSitePosition(RSite, Index);
 }
 
-int TParticle::GetYL() {
-    return nYL;
-}
-
-int TParticle::GetDL() {
-    return nDL;
-}
-
 std::ostream &operator<<(std::ostream &os, const TParticle::MobState &me) {
     switch (me) {
         case TParticle::MobState::FREE:
             return os << "Free";
         case TParticle::MobState::LINKED :
-            return os << "Linked";
+            return os << "YLA";
         case TParticle::MobState::BLOCKED:
             return os << "Blocked";
     }

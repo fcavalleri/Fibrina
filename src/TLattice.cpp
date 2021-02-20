@@ -1,6 +1,6 @@
 #include "TLattice.h"
 
-TLattice::TLattice(int pLx, int pLy) : Lx(pLx), Ly(pLy), Grid(Lx, std::vector<GridElement>(Ly)), N(0), nYL(0), nDL(0)  //Initialize
+TLattice::TLattice(int pLx, int pLy) : Lx(pLx), Ly(pLy), Grid(Lx, std::vector<GridElement>(Ly)), N(0)  //Initialize
 {
     // Set static parameters for TParticle and TSite classes
     TParticle::Lx = pLx;
@@ -48,16 +48,15 @@ void TLattice::SetForDLA() {
     Parts[0].is_activeB = true;
     Parts[0].mob = TParticle::MobState::BLOCKED;
 
+
     Parts[0].SetParticlePosition();
 }
 
 void TLattice::Evolve() {
     //For N times, chose a random particle from Parts vector and Evolve it
     for (int i = 0; i < N; i++) {
-        TParticle &j=Parts[randM(N)];
-        if (j.Evolve()) RandomFill(1);
-        nYL+=j.GetYL();
-        nDL+=j.GetDL();
+
+        if (Parts[randM(N)].Evolve()) RandomFill(1);
     }
 
     /*for (auto &i : Parts){
@@ -97,12 +96,4 @@ TLattice::GridElement &TLattice::GetSiteIndexes(TSite &pSite) {
 TParticle &TLattice::GetParticle(int pIndex) {
 //not a copy, the reference at that particle with index pIndex
     return Parts.at(pIndex);
-}
-
-int TLattice::GetNDL() {
-    return nDL;
-}
-
-int TLattice::GetNYL() {
-    return nYL;
 }

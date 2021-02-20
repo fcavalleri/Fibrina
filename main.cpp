@@ -43,7 +43,7 @@ int main() {
 
   // Files where save analysis
   FILE*fp1 = fopen("NfixRg","w");
-  FILE*fp2 = fopen("nYLnDL","w");
+  //FILE*fp2 = fopen("nYLnDL","w");
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
@@ -83,8 +83,8 @@ int main() {
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
 
-        fprintf(fp2,"%d \t %d \n",Lattice.GetNYL(),Lattice.GetNDL());
-        fflush(fp2);
+        //fprintf(fp2,"%d \t %d \n",Lattice.GetNYL(),Lattice.GetNDL());
+        //fflush(fp2);
 
         int Nfix{0};
         double Rg{0};
