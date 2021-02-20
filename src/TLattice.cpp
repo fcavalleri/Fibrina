@@ -54,7 +54,7 @@ void TLattice::SetForDLA() {
 void TLattice::Evolve() {
     //For N times, chose a random particle from Parts vector and Evolve it
     for (int i = 0; i < N; i++) {
-        TParticle j=Parts[randM(N)];
+        TParticle &j=Parts[randM(N)];
         if (j.Evolve()) RandomFill(1);
         nYL+=j.GetYL();
         nDL+=j.GetDL();
