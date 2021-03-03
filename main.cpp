@@ -90,6 +90,7 @@ int main() {
         double Rg{0};
         double xmean{0};
         double ymean{0};
+
       for (auto &i : Lattice.Parts) {
         if (i.mob != TParticle::MobState::FREE) {
           //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
@@ -138,12 +139,12 @@ int main() {
       xmean=xmean/Nfix;
       ymean=ymean/Nfix;
 
-        // Compute Rg^2
-        for (auto &i : Lattice.Parts) {
-            if (i.mob != TParticle::MobState::FREE) {
-                Rg=Rg+(i.CSite.x*0.5-xmean)*(i.CSite.x*0.5 -xmean) + (i.CSite.y*0.5*sqrt(3) -ymean)*(i.CSite.y*0.5*sqrt(3) -ymean);
-            }
+      // Compute Rg^2
+      for (auto &i : Lattice.Parts) {
+        if (i.mob != TParticle::MobState::FREE) {
+            Rg=Rg+(i.CSite.x*0.5-xmean)*(i.CSite.x*0.5 -xmean) + (i.CSite.y*0.5*sqrt(3) -ymean)*(i.CSite.y*0.5*sqrt(3) -ymean);
         }
+      }
 
         Rg=sqrt(Rg/Nfix);
 

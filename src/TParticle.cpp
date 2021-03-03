@@ -246,6 +246,7 @@ void TParticle::YLB(TParticle &other){
     other.LinkedWith[0] = Index;
     is_activeB = false;
     other.is_freeL = false;
+    Lattice->nYL++;
 }
 void TParticle::YLA(TParticle &other){
     mob = MobState::LINKED;
