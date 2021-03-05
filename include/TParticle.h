@@ -104,10 +104,10 @@ class TParticle
 
     //! If it's possible a closure over the input particle, occurs
         void CheckClose();
-        void ChekCloseYLA(TParticle &pPart);
-        void ChekCloseYLB(TParticle &pPart);
-        void ChekCloseYLR(TParticle &pPart);
-        void ChekCloseYLL(TParticle &pPart);
+        void CheckCloseYLA(TParticle &pPart);
+        void CheckCloseYLB(TParticle &pPart);
+        void CheckCloseYLR(TParticle &pPart);
+        void CheckCloseYLL(TParticle &pPart);
 
 };
 

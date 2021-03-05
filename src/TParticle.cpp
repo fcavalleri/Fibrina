@@ -271,22 +271,22 @@ void TParticle::YLR(TParticle &other){
 
 void TParticle::CheckClose() {
     if (!is_freeL) {
-        ChekCloseYLL(Lattice->GetParticle(LinkedWith[0]));
+        CheckCloseYLL(Lattice->GetParticle(LinkedWith[0]));
     }
     if (!is_activeB) {
-        ChekCloseYLB(Lattice->GetParticle(LinkedWith[1]));
+        CheckCloseYLB(Lattice->GetParticle(LinkedWith[1]));
     }
     if (!is_activeA) {
-        ChekCloseYLA(Lattice->GetParticle(LinkedWith[2]));
+        CheckCloseYLA(Lattice->GetParticle(LinkedWith[2]));
     }
     if (!is_freeR) {
-        ChekCloseYLR(Lattice->GetParticle(LinkedWith[3]));
+        CheckCloseYLR(Lattice->GetParticle(LinkedWith[3]));
     }
 }
 
 
-void TParticle::ChekCloseYLL(TParticle &other) {
-    if (!is_activeB || !other.is_freeL) return;
+void TParticle::CheckCloseYLL(TParticle &pPart) {
+    if (!is_activeB || !pPart.is_freeL) return;
     if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
@@ -294,60 +294,60 @@ void TParticle::ChekCloseYLL(TParticle &other) {
     CSite.Translate(dx[(Spin+2)%6], dy[(Spin+2)%6]);
     Spin = (Spin + 1) % 6;
     RecalcExtSites();
-    is_activeB = false; LinkedWith[1] = other.Index;
-    other.is_freeL = false; other.LinkedWith[0] = Index;
+    is_activeB = false; LinkedWith[1] = pPart.Index;
+    pPart.is_freeL = false; pPart.LinkedWith[0] = Index;
     mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
+    pPart.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     Lattice->nYL--; Lattice->nDL++;
 
-    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 }
 
-void TParticle::ChekCloseYLB(TParticle &other) {
-    if (!is_freeL || !other.is_activeB) return;
+void TParticle::CheckCloseYLB(TParticle &pPart) {
+    if (!is_freeL || !pPart.is_activeB) return;
     if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
     Spin = (Spin - 1) % 6;
     RecalcExtSites();
-    is_freeL = false; LinkedWith[0] = other.Index;
-    other.is_activeB = false; other.LinkedWith[1] = Index;
+    is_freeL = false; LinkedWith[0] = pPart.Index;
+    pPart.is_activeB = false; pPart.LinkedWith[1] = Index;
     mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
+    pPart.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     Lattice->nYL--; Lattice->nDL++;
 
-    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 }
 
-void TParticle::ChekCloseYLA(TParticle &other) {
-    if (!is_freeR || !other.is_activeA) return;
+void TParticle::CheckCloseYLA(TParticle &pPart) {
+    if (!is_freeR || !pPart.is_activeA) return;
     if (ranMT() > CLO_TRESH) return;
 
     ClearParticlePosition();
 
     Spin = (Spin + 1) % 6;
     RecalcExtSites();
-    is_freeR = false; LinkedWith[3] = other.Index;
-    other.is_activeA = false; other.LinkedWith[2] = Index;
+    is_freeR = false; LinkedWith[3] = pPart.Index;
+    pPart.is_activeA = false; pPart.LinkedWith[2] = Index;
     mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
+    pPart.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     Lattice->nYL--; Lattice->nDL++;
 
-    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 }
 
-void TParticle::ChekCloseYLR(TParticle &other) {
-    if (!is_activeA || !other.is_freeR) return;  //first check if there are closing conditions
+void TParticle::CheckCloseYLR(TParticle &pPart) {
+    if (!is_activeA || !pPart.is_freeR) return;  //first check if there are closing conditions
     if (ranMT() > CLO_TRESH) return; //if there are, close with a rate CLO_RATE
 
     ClearParticlePosition();
@@ -355,16 +355,16 @@ void TParticle::ChekCloseYLR(TParticle &other) {
     CSite.Translate(dx[(Spin+1)%6], dy[(Spin+1)%6]);
     Spin = (Spin - 1) % 6;
     RecalcExtSites();
-    is_activeA = false; LinkedWith[2] = other.Index;
-    other.is_freeR = false; other.LinkedWith[3] = Index;
+    is_activeA = false; LinkedWith[2] = pPart.Index;
+    pPart.is_freeR = false; pPart.LinkedWith[3] = Index;
     mob = MobState::BLOCKED;
-    other.mob = MobState::BLOCKED;
+    pPart.mob = MobState::BLOCKED;
 
     SetParticlePosition();
 
     Lattice->nYL--; Lattice->nDL++;
 
-    std::cout << "Closing! Of " << *this << " over " << other << std::endl;
+    std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 }
 
 void TParticle::SetParticlePosition() {

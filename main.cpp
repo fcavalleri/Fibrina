@@ -146,7 +146,7 @@ int main() {
         }
       }
 
-        Rg=sqrt(Rg/Nfix);
+      Rg=sqrt(Rg/Nfix);
 
         /*std::string filename("output_Lx");
         filename.append(std::to_string(GRID_LEN_X)).append("_Ly")
