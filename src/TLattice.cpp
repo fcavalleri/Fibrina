@@ -75,11 +75,10 @@ void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
   //Grid[pSite.x*L+pSite.y].is_central=pSite.is_central;
 }
 
-void TLattice::ClearSitePosition(TSite &pSite, int pIndex)//////////////////////////////////////
-{
+void TLattice::ClearSitePosition(TSite &pSite, int pIndex) {
   //Gives at the int element of the Grid struct the value -1. The bool value doesn't matter
   GridElement &cell = Grid[pSite.x][pSite.y];
-  cell.erase(std::find(cell.begin(), cell.end(), pIndex));
+  cell.unordered_erase(std::find(cell.begin(), cell.end(), pIndex));
   //prima era
   /*std::remove(Grid[pos].begin(),Grid[pos].end(),pIndex),Grid[pos].end()*/
 }
