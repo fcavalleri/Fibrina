@@ -137,6 +137,8 @@ void TParticle::RecalcExtSites() {
   LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
 }
 
+#define PARTICLE_LOGGING true
+
 bool TParticle::CheckJoinWithCSite(TParticle &other) {
 
   if (other.mob == MobState::FREE) return false;
@@ -153,7 +155,9 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
       //otherwise, check also the other site and if possible realize DLAs
       if (other.is_activeA && is_freeR) {
         DLAs(other);
+#if PARTICLE_LOGGING
         std::cout << "DL at their A's of " << *this << " and " << other << std::endl;
+#endif
         return true;
       }
     }
@@ -161,7 +165,9 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
     //YL at my A
     if (other.Spin == (Spin + 4) % 6) {
       YLA(other);
+#if PARTICLE_LOGGING
       std::cout << "YL at his A of " << *this << " with " << other << std::endl;
+#endif
       return true;
     }
   }
@@ -178,14 +184,18 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
       //otherwise, check also the other site and if possible realize DLBs
       if (is_freeL && other.is_activeB) {
         DLBs(other);
+#if PARTICLE_LOGGING
         std::cout << "DL at their B's of " << *this << " and " << other << std::endl;
+#endif
         return true;
       }
     }
     //YL at my B
     if (other.Spin == (Spin + 2) % 6) {
       YLB(other);
+#if PARTICLE_LOGGING
       std::cout << "YL at other A of " << *this << " with " << other << std::endl;
+#endif
       return true;
     }
   }
@@ -199,7 +209,9 @@ bool TParticle::CheckJoinWithRSite(TParticle &other) {
   //YLR (at other A)
   if (RSite == other.CSite && other.Spin == (Spin + 2) % 6 && is_freeR && other.is_activeA) {
     YLR(other);
+#if PARTICLE_LOGGING
     std::cout << "YL at other A of " << *this << " with " << other << std::endl;
+#endif
     return true;
   }
   return false;
@@ -211,7 +223,9 @@ bool TParticle::CheckJoinWithLSite(TParticle &other) {
   //YLL (at other B)
   if (LSite == other.CSite && other.Spin == (Spin + 4) % 6 && is_freeL && other.is_activeB) {
     YLL(other);
+#if PARTICLE_LOGGING
     std::cout << "YL at other B of " << *this << " with " << other << std::endl;
+#endif
     return true;
   }
   return false;
@@ -319,8 +333,9 @@ void TParticle::CheckCloseYLL(TParticle &pPart) {
 
   Lattice->nYL--;
   Lattice->nDL++;
-
+#if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
+#endif
 }
 
 void TParticle::CheckCloseYLB(TParticle &pPart) {
@@ -342,8 +357,9 @@ void TParticle::CheckCloseYLB(TParticle &pPart) {
 
   Lattice->nYL--;
   Lattice->nDL++;
-
+#if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
+#endif
 }
 
 void TParticle::CheckCloseYLA(TParticle &pPart) {
@@ -365,8 +381,9 @@ void TParticle::CheckCloseYLA(TParticle &pPart) {
 
   Lattice->nYL--;
   Lattice->nDL++;
-
+#if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
+#endif
 }
 
 void TParticle::CheckCloseYLR(TParticle &pPart) {
@@ -389,8 +406,9 @@ void TParticle::CheckCloseYLR(TParticle &pPart) {
 
   Lattice->nYL--;
   Lattice->nDL++;
-
+#if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
+#endif
 }
 
 void TParticle::SetParticlePosition() {
