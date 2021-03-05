@@ -12,7 +12,7 @@
 class TParticle;
 
 //! This class ...
-class TLattice {
+class TLattice : public sf::Drawable {
 public:
   //! Constructor needs Lattice linear dimension (pL)
   TLattice();
@@ -49,6 +49,7 @@ public:
   TParticle &GetParticle(int pIndex);
 
 protected:
+  void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 private:
 

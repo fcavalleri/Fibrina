@@ -35,7 +35,6 @@ static constexpr double DL2YL_RATE = 0;
 
 int main() {
   using namespace parameters;
-
   // Files where save analysis
   FILE *fp1 = fopen("NfixRg", "w"); //particles in aggregate and Gyration Radius
   FILE *fp2 = fopen("nYLnDL", "w"); //number of YL and DL links
@@ -68,13 +67,9 @@ int main() {
 // Time Evolution
   for (int t : tq::trange(T_MAX)) {
 
-#if DISPLAY_SIMULATION
     // Possibility of slowing down the simulation
-    usleep(MSEC_WAIT * 1000);
+    if constexpr(MSEC_WAIT)usleep(MSEC_WAIT * 1000);
 
-    // Clear between each time step
-    app.clear();
-#endif
     // Ask the Lattice to Evolve all the System by a time step
     Lattice.Evolve();
 
@@ -85,17 +80,8 @@ int main() {
       fflush(fp2);
 
 #if DISPLAY_SIMULATION
-      for (auto &i : Lattice.Parts) {
-        if (i.mob != TParticle::MobState::FREE) {
-          //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
-          sf::Vertex monomer[] =
-              {
-                  sf::Vertex(sf::Vector2f(i.LSite.x, i.LSite.y)),
-                  sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y))
-              };
-          app.draw(monomer, 2, sf::Lines);
-        }
-      }
+      app.clear();
+      app.draw(Lattice);
 #endif
 
       //TODO: move this computation elsewhere (e.g. in TLattice)
@@ -142,7 +128,17 @@ int main() {
     }
   }
 #if DISPLAY_SIMULATION
-  while (app.isOpen()) for (sf::Event event; app.pollEvent(event);) if (event.type == sf::Event::Closed) app.close();
+  while (app.isOpen()) {
+    for (sf::Event event; app.pollEvent(event);) {
+      if (event.type == sf::Event::Closed)
+        app.close();
+      else {
+        app.clear();
+        app.draw(Lattice);
+        app.display();
+      }
+    }
+  }
 #endif
   return 0;
 }

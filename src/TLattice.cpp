@@ -92,3 +92,13 @@ TParticle &TLattice::GetParticle(int pIndex) {
 //not a copy, the reference at that particle with index pIndex
   return Parts.at(pIndex);
 }
+void TLattice::draw(sf::RenderTarget &target, sf::RenderStates states) const {
+  for (auto &i : Parts) {
+    if (i.mob != TParticle::MobState::FREE) {
+      //TODO: fix bug when monomer is on the border
+      sf::Vertex monomer[] = {sf::Vertex(sf::Vector2f(i.LSite.x, i.LSite.y)),
+                              sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y))};
+      target.draw(monomer, 2, sf::Lines, states);
+    }
+  }
+}
