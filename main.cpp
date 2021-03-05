@@ -24,8 +24,8 @@ int main() {
 
 // Define system parameters
   const int N_PART = 100;
-  const int GRID_LEN_X = 450;
-  const int GRID_LEN_Y = 350;
+  static constexpr int GRID_LEN_X = TSite::Lx;
+  static constexpr  int GRID_LEN_Y = TSite::Ly;
 
   const int T_MAX = 800000;
   const int MSEC_WAIT = 0;
@@ -49,7 +49,7 @@ int main() {
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
 
 // Create the Lattice
-  TLattice Lattice{GRID_LEN_X, GRID_LEN_Y};
+  TLattice Lattice;
 
 // Set Particle's diffusion parameters
   TParticle::ZY_ROT_RATE = ZY_ROT_RATE;
@@ -62,7 +62,7 @@ int main() {
   TParticle::DL2YL_RATE = DL2YL_RATE;
 
 // Fill the Lattice with the Particles
-  usleep(3 * 1000 * 1000);
+  //usleep(3 * 1000 * 1000);
   Lattice.RandomFill(N_PART);
 
 // Set for the DLA simulation
