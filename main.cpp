@@ -10,7 +10,7 @@
 #include <fstream>
 #include "tqdm.hpp"
 
-#define DISPLAY_SIMULATION false
+#define DISPLAY_SIMULATION true
 
 namespace parameters {
 // Define system parameters
