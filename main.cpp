@@ -10,10 +10,9 @@
 #include <fstream>
 #include "tqdm.hpp"
 
-#define DISPLAY_SIMULATION true
-
 namespace parameters {
 // Define system parameters
+
 static constexpr int N_PART = 100;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
@@ -21,6 +20,8 @@ static constexpr int GRID_LEN_Y = TSite::Ly;
 static constexpr int T_MAX = 800000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+
+#define DISPLAY_SIMULATION false
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
