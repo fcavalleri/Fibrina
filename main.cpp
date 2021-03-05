@@ -27,7 +27,7 @@ int main() {
   const int GRID_LEN_X = 450;
   const int GRID_LEN_Y = 350;
 
-  const int T_MAX = 500000;
+  const int T_MAX = 800000;
   const int MSEC_WAIT = 0;
   const int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
@@ -38,12 +38,12 @@ int main() {
   const double LEN_WIDHT_RATIO = 0.1;
 
   const double ACT_TRESH = 0.0012;
-  const double CLO_TRESH = 0.001;
+  const double CLO_TRESH = 0.003;
   const double DL2YL_RATE = 0;
 
   // Files where save analysis
-  FILE*fp1 = fopen("NfixRg","w");
-  FILE*fp2 = fopen("nYLnDL","w");
+  FILE*fp1 = fopen("NfixRg","w"); //particles in aggregate and Gyration Radius
+  FILE*fp2 = fopen("nYLnDL","w"); //number of YL and DL links
 
 // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
