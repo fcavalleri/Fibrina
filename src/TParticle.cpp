@@ -137,7 +137,7 @@ void TParticle::RecalcExtSites() {
   LSite = TSite((CSite.x - dx[Spin] + Lx) % Lx, (CSite.y - dy[Spin] + Ly) % Ly);
 }
 
-#define PARTICLE_LOGGING true
+#define PARTICLE_LOGGING false
 
 bool TParticle::CheckJoinWithCSite(TParticle &other) {
 

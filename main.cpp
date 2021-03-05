@@ -8,8 +8,9 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "tqdm.hpp"
 
-#define DISPLAY_SIMULATION true
+#define DISPLAY_SIMULATION false
 
 namespace parameters {
 // Define system parameters
@@ -47,6 +48,7 @@ int main() {
 // Create the Lattice
   TLattice Lattice;
 
+  //TODO: declare these parameters as constexpr inside TParticle
 // Set Particle's diffusion parameters
   TParticle::ZY_ROT_RATE = ZY_ROT_RATE;
   TParticle::X_ROT_RATE = X_ROT_RATE;
@@ -58,14 +60,13 @@ int main() {
   TParticle::DL2YL_RATE = DL2YL_RATE;
 
 // Fill the Lattice with the Particles
-  //usleep(3 * 1000 * 1000);
   Lattice.RandomFill(N_PART);
 
 // Set for the DLA simulation
   Lattice.SetForDLA();
 
 // Time Evolution
-  for (int t = 0; t < T_MAX; ++t) {
+  for (int t : tq::trange(T_MAX)) {
 
 #if DISPLAY_SIMULATION
     // Possibility of slowing down the simulation
