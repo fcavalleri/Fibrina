@@ -70,7 +70,7 @@ void TLattice::Evolve() {
 
 void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
   //Gives at the int element of the Grid struct the value pIndex
-  Grid[pSite.x][pSite.y].push_back(pIndex);
+  Grid[pSite.x][pSite.y].insert_safe(pIndex);
   //Gives at the bool element of the Grid struct the value is_central given by pSite
   //Grid[pSite.x*L+pSite.y].is_central=pSite.is_central;
 }
@@ -78,7 +78,7 @@ void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
 void TLattice::ClearSitePosition(TSite &pSite, int pIndex) {
   //Gives at the int element of the Grid struct the value -1. The bool value doesn't matter
   GridElement &cell = Grid[pSite.x][pSite.y];
-  cell.unordered_erase(std::find(cell.begin(), cell.end(), pIndex));
+  cell.erase(pIndex);
   //prima era
   /*std::remove(Grid[pos].begin(),Grid[pos].end(),pIndex),Grid[pos].end()*/
 }

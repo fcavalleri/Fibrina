@@ -6,7 +6,7 @@
 #include "RandUtils.h"
 #include <SFML/Graphics.hpp>
 #include "matrix.h"
-#include "small_vector.hpp"
+#include "small_uint_set.hpp"
 
 //"class forward declaration" da mettere quando 2 classi si includono a vicenda
 class TParticle;
@@ -36,7 +36,8 @@ public:
   void Evolve();
 
   //! The Lattice is composed by Grid Elements made up with an int (the Index of the Particle if present) and the bool Is_Central
-  typedef mtx::small_vector<uint16_t> GridElement; // type def
+  //typedef mtx::small_vector<uint16_t> GridElement; // type def
+  typedef mtx::small_uint_set<uint16_t,10> GridElement;
 
   //Class Setter ang Getter Methods
   //! Put pIndex of the Index-Particle in the pSite.x and pSite.y position of the Lattice
