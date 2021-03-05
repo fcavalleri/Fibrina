@@ -1,9 +1,13 @@
 #include "RandUtils.h"
 #include <random>
+#include <optional>
 
-std::mt19937 &GetEngine() {
+std::mt19937 &GetEngine(std::optional<uint64_t> seed = {}) {
   static std::random_device R;
   static std::mt19937 E(R());  //Mersenne Twister random numbers
+  if(seed.has_value()){
+    E.seed(seed.value());
+  }
   return E;
 }
 
