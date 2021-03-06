@@ -1,7 +1,33 @@
 #pragma once
 
 /*
- *Copyright (c) 2018-2019 <Miguel Raggi> <mraggi@gmail.com>
+ * Forked from:
+ * Copyright (c) 2018-2019 <Miguel Raggi> <mraggi@gmail.com>
+ *
+ *Permission is hereby granted, free of charge, to any person
+ *obtaining a copy of this software and associated documentation
+ *files (the "Software"), to deal in the Software without
+ *restriction, including without limitation the rights to use,
+ *copy, modify, merge, publish, distribute, sublicense, and/or sell
+ *copies of the Software, and to permit persons to whom the
+ *Software is furnished to do so, subject to the following
+ *conditions:
+ *
+ *The above copyright notice and this permission notice shall be
+ *included in all copies or substantial portions of the Software.
+ *
+ *THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+ *EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+ *OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+ *NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+ *HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ *WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+ *FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+ *OTHER DEALINGS IN THE SOFTWARE.
+ */
+
+/*
+ *Copyright (c) 2021 <Luca Cavalleri> <luca.cavallery@gmail.com>
  *
  *Permission is hereby granted, free of charge, to any person
  *obtaining a copy of this software and associated documentation
@@ -64,25 +90,69 @@ public:
   time_point_t start_;
 };
 
+
+// -------------------- time estimation --------------------
+
+class linear_rg {
+public:
+  linear_rg() : n(0), X(0), Y(0), XX(0), XY(0) {}
+  void add_point(double x, double y) {
+    n++;
+    X += x;
+    Y += y;
+    XX += x * x;
+    XY += x * y;
+  }
+  void add_point(double x, double y, double weight) {
+    n += weight;
+    X += x * weight;
+    Y += y * weight;
+    XX += x * x * weight;
+    XY += x * y * weight;
+  }
+  struct fit_t {
+    double m, q;
+    double eval(double x) const { return m * x + q; }
+    double eval_range(size_t x_begin, size_t x_end) const {
+      return (x_end - x_begin) * q + (x_end * (x_end - 1) - x_begin * (x_begin - 1)) * m / 2;
+    }
+  };
+  fit_t fit() const {
+    double m = (XY - X * Y / n) / ((XX) - X * X / n);
+    double q = (Y - m * X) / n;
+    return fit_t{.m = m, .q = q};
+  }
+  size_t size() const { return n; }
+private:
+  double n;
+  // all the sums
+  double X, Y, XX, XY;
+};
+
 // -------------------- progress_bar --------------------
-void clamp(double &x, double a, double b) {
-  if (x < a) x = a;
-  if (x > b) x = b;
-}
 
 class progress_bar {
+private:
+  void update_model(size_t done, size_t n) {
+    if (done > done_) {
+      const double now = chronometer_.peek();
+      const double it_len = (now - last_it_started_) / (done - done_);
+      last_it_started_ = now;
+      model_.add_point(done - 1, it_len, done + 10);
+      done_ = done;
+    }
+  }
 public:
   void restart() {
     chronometer_.reset();
     refresh_.reset();
   }
 
-  void update(double progress) {
-    if (time_since_refresh() > min_time_per_update_ || progress == 0.0 || progress == 1.0) {
+  void update(size_t done, size_t n) {
+    if (time_since_refresh() > min_time_per_update_ || done == 0 || done == n) {
       reset_refresh_timer();
-      display(progress);
+      display(done, n);
     }
-    suffix_.str("");
   }
 
   void set_ostream(std::ostream &os) { os_ = &os; }
@@ -90,22 +160,20 @@ public:
   void set_bar_size(int size) { bar_size_ = size; }
   void set_min_update_time(double time) { min_time_per_update_ = time; }
 
-  template<class T>
-  progress_bar &operator<<(const T &t) {
-    suffix_ << t;
-    return *this;
-  }
-
   double elapsed_time() const { return chronometer_.peek(); }
 
 private:
-  void display(double progress) {
-    clamp(progress, 0.0, 1.0);
+  void display(size_t done, size_t n) {
+    update_model(done, n);
+
+    const double progress = (n == 0) ? 1.0 : double(std::min(done, n)) / n;
 
     auto flags = os_->flags();
 
+    const auto fit = model_.fit();
     double t = chronometer_.peek();
-    double eta = t / progress - t;
+    double eta = fit.eval_range(done, n);
+    double it_us = fit.eval(done) * 1000000;
 
     std::stringstream bar;
 
@@ -114,16 +182,16 @@ private:
 
     print_bar(bar, progress);
 
-    bar << " [" << t << "s < " << eta << "s] ";
+    bar << " " << done << "/" << n << " [" << t << "<" << eta << "|" << (t + eta) << ", " << it_us << "μs/it] ";
 
     std::string sbar = bar.str();
-    std::string suffix = suffix_.str();
+    //std::string suffix = suffix_.str();
 
-    index out_size = sbar.size() + suffix.size();
+    index out_size = sbar.size();// + suffix.size();
     term_cols_ = std::max(term_cols_, out_size);
     index num_blank = term_cols_ - out_size;
 
-    (*os_) << sbar << suffix << std::string(num_blank, ' ') << std::flush;
+    (*os_) << sbar << std::string(num_blank, ' ') << std::flush;
 
     os_->flags(flags);
   }
@@ -133,10 +201,11 @@ private:
     ss << '|';
     for (auto i = 0; i < nf8 / 8; ++i)ss << "\u2588";
     if (nf8 % 8) {
-      std::array<int8_t, 4> tile = {static_cast<signed char>(226), static_cast<signed char>(150), static_cast<signed char>(136 + 8 - (nf8 % 8)), 0};
+      std::array<int8_t, 4> tile =
+          {static_cast<signed char>(226), static_cast<signed char>(150), static_cast<signed char>(136 + 8 - (nf8 % 8)),
+           0};
       ss << tile.at(0) << tile.at(1) << tile.at(2);
     }
-    //TODO: add partially filled bars
     ss << std::string((bar_size_ * 8 - nf8) / 8, ' ') << '|';
   }
 
@@ -144,8 +213,11 @@ private:
   void reset_refresh_timer() { refresh_.reset(); }
 
   Chronometer chronometer_{};
+  size_t done_;
+  double last_it_started_ = 0;
+  linear_rg model_;
   Chronometer refresh_{};
-  double min_time_per_update_{0.15}; // found experimentally
+  double min_time_per_update_{0.10}; // found experimentally
 
   std::ostream *os_{&std::cerr};
 
@@ -236,7 +308,7 @@ public:
   EndIter end() const { return last_; }
 
   void update() {
-    bar_.update(calc_progress());
+    bar_.update(iters_done_, num_iters_);
     ++iters_done_;
   }
 
@@ -258,9 +330,6 @@ public:
   }
 
 private:
-  double calc_progress() const {
-    return iters_done_ / (num_iters_ + 0.0000000000001);
-  }
 
   iterator first_;
   EndIter last_;
@@ -449,74 +518,5 @@ private:
   tq::Chronometer chrono_;
   mutable double workaround_;
 };
-
-// -------------------- timer -------------------
-struct timer {
-public:
-  using iterator = timing_iterator;
-  using end_iterator = timing_iterator_end_sentinel;
-  using const_iterator = iterator;
-  using value_type = double;
-
-  explicit timer(double num_seconds) : num_seconds(num_seconds) {
-  }
-
-  iterator begin() const { return iterator(); }
-  end_iterator end() const { return end_iterator(num_seconds); }
-
-  double num_seconds;
-};
-
-class tqdm_timer {
-public:
-  using iterator = iter_wrapper<timing_iterator, tqdm_timer>;
-  using end_iterator = timer::end_iterator;
-  using value_type = typename timing_iterator::value_type;
-  using size_type = index;
-  using difference_type = index;
-
-  explicit tqdm_timer(double num_seconds)
-      : num_seconds_(num_seconds) {}
-
-  tqdm_timer(const tqdm_timer &) = delete;
-  tqdm_timer(tqdm_timer &&) = delete;
-  tqdm_timer &operator=(tqdm_timer &&) = delete;
-  tqdm_timer &operator=(const tqdm_timer &) = delete;
-
-  template<class Container>
-  tqdm_timer(Container &&) = delete; // prevent misuse!
-
-  iterator begin() {
-    bar_.restart();
-    return iterator(timing_iterator(), this);
-  }
-
-  end_iterator end() const { return end_iterator(num_seconds_); }
-
-  void update() {
-    double t = bar_.elapsed_time();
-
-    bar_.update(t / num_seconds_);
-  }
-
-  void set_ostream(std::ostream &os) { bar_.set_ostream(os); }
-  void set_prefix(std::string s) { bar_.set_prefix(std::move(s)); }
-  void set_bar_size(int size) { bar_.set_bar_size(size); }
-  void set_min_update_time(double time) { bar_.set_min_update_time(time); }
-
-  template<class T>
-  tqdm_timer &operator<<(const T &t) {
-    bar_ << t;
-    return *this;
-  }
-
-private:
-  double num_seconds_;
-  progress_bar bar_;
-};
-
-auto tqdm(timer t) {
-  return tqdm_timer(t.num_seconds);
-}
 
 } // namespace tq
