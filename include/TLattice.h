@@ -13,18 +13,24 @@ class TParticle;
 
 //! This class ...
 class TLattice : public sf::Drawable {
+
 public:
-  //! Constructor needs Lattice linear dimension (pL)
+  //! Constructor
   TLattice();
   virtual ~TLattice();
 
   //Class Members
-  //! We have only one istance of this class, so L and N are a members
+  //! Total number of particles
   int N;
-  //!
-  int nYL, nDL;
+  //! Number of particles in the polimer
+  int Nfix;
   //! The Lattice own as a member the vector of All Parts
   std::vector<TParticle> Parts;
+  //! Number of YL and DL links
+  int nYL, nDL;
+  //! Compute sum and squared sum of xs and ys to calc baricentre and square gyration radius of polimer
+  double sumx, sumy, sumx2, sumy2;
+  double Rg2;
 
   //Class Methods
   //! Fill the Lattice whit pN Particles
@@ -54,9 +60,9 @@ protected:
 
 private:
 
-  //! Here we don't kwon yet N, so we initializate a pointer to a integer array
+  //! Matrix class manage positions of particles trought their indexes
   // std::array<std::array<GridElement, TSite::Ly>, TSite::Lx> Grid;
-  mtx::matrix<GridElement, TSite::Lx, TSite::Ly> Grid;
+   mtx::matrix<GridElement, TSite::Lx, TSite::Ly> Grid;
 
 };
 

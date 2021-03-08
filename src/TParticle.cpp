@@ -150,6 +150,9 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
       if (ranMT() < DL2YL_RATE) {
         Spin = (Spin - 1) % 6;
         YLA(other);
+#if PARTICLE_LOGGING
+          std::cout << "YL at his A of " << *this << " and " << other << std::endl;
+#endif
         return true;
       }
       //otherwise, check also the other site and if possible realize DLAs
@@ -179,6 +182,9 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
       if (ranMT() < DL2YL_RATE) {
         Spin = (Spin + 1) % 6;
         YLB(other);
+#if PARTICLE_LOGGING
+          std::cout << "YL at his B of " << *this << " and " << other << std::endl;
+#endif
         return true;
       }
       //otherwise, check also the other site and if possible realize DLBs
@@ -278,6 +284,7 @@ void TParticle::YLB(TParticle &other) {
   other.is_freeL = false;
   Lattice->nYL++;
 }
+
 void TParticle::YLA(TParticle &other) {
   mob = MobState::LINKED;
   other.mob = MobState::BLOCKED;

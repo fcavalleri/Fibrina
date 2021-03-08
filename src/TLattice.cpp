@@ -2,7 +2,8 @@
 
 static constexpr int Lx = TSite::Lx, Ly = TSite::Ly;
 
-TLattice::TLattice() :  /*Grid(Lx, std::vector<GridElement>(Ly)),*/ N(0), nYL(0), nDL(0)  //Initialize
+TLattice::TLattice() :  /*Grid(Lx, std::vector<GridElement>(Ly)),*/
+N(0), Nfix(0), nYL(0), nDL(0), sumx(0), sumy(0), sumx2(0), sumy2(0), Rg2(0)  //Initialize
 {
   // Set static parameters for TParticle and TSite classes
   TParticle::Lattice = this; //this è il puntatore all'istanza corrente della classe
@@ -47,12 +48,31 @@ void TLattice::SetForDLA() {
   Parts[0].mob = TParticle::MobState::BLOCKED;
 
   Parts[0].SetParticlePosition();
+
+  Nfix=1;
+  sumx=Lx/2 *0.5;
+  sumy=Ly/2 *0.5*sqrt(3);
+  sumx2=(Lx/2)*(Lx/2) *0.25;
+  sumy2=(Ly/2)*(Ly/2)*0.25*3;
 }
 
 void TLattice::Evolve() {
   //For N times, chose a random particle from Parts vector and Evolve it
   for (int i = 0; i < N; i++) {
-    if (Parts[randM(N)].Evolve()) RandomFill(1);
+      int j=randM(N);
+    if (Parts[j].Evolve()) {
+
+        // Calculate new Rg
+        Nfix++;
+        sumx+=Parts[j].CSite.x * 0.5;
+        sumy+=Parts[j].CSite.y * 0.5 * sqrt(3);
+        sumx2+=Parts[j].CSite.x * Parts[j].CSite.x * 0.25;
+        sumy2+=Parts[j].CSite.y * Parts[j].CSite.y * 0.25 * 3;
+        Rg2=sumx2/Nfix - (sumx/Nfix)*(sumx/Nfix) + sumy2/Nfix - (sumy/Nfix)*(sumy/Nfix);
+
+        //Add new particle to preserve free monomer concentration
+        RandomFill(1);
+    };
   }
 
   /*for (auto &i : Parts){

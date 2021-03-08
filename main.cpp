@@ -17,9 +17,9 @@ static constexpr int N_PART = 100;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 800000;
+static constexpr int T_MAX = 500000;
 static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int VIEW = 100; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
 #define DISPLAY_SIMULATION false
 
@@ -77,7 +77,7 @@ int main() {
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
 
-      fprintf(fp2, "%d \t %d \t %d \n", t, Lattice.nYL, Lattice.nDL);
+      fprintf(fp2, "%d \t %d \t %d \n", t, Lattice.nYL, Lattice.nYL);
       fflush(fp2);
 
 #if DISPLAY_SIMULATION
@@ -88,16 +88,24 @@ int main() {
       //TODO: move this computation elsewhere (e.g. in TLattice)
       int Nfix = 0;
       double Rg = 0;
+      double Rg2 = 0;
       double xmean = 0;
       double ymean = 0;
+      double xmean2 = 0;
+      double ymean2 = 0;
       for (auto &i : Lattice.Parts) {
         if (i.mob != TParticle::MobState::FREE) {
           // Compute baricenter
-          xmean = xmean + i.CSite.x * 0.5;
+          xmean = xmean + (i.CSite.x) * 0.5;
           ymean = ymean + i.CSite.y * 0.5 * sqrt(3);
+          xmean2 = xmean2 + (i.CSite.x) * 0.5*(i.CSite.x) * 0.5;
+          ymean2 = ymean2 + i.CSite.y * 0.5 * sqrt(3)*i.CSite.y * 0.5 * sqrt(3);
           Nfix = Nfix + 1;
         }
       }
+
+        //fprintf(fp1, "%e \t %e \t %e \t %e \t %d \n", xmean2, Lattice.sumx2, ymean2, Lattice.sumy2, Nfix);
+        //fflush(fp1);
 
       xmean = xmean / Nfix;
       ymean = ymean / Nfix;
@@ -106,13 +114,15 @@ int main() {
       for (auto &i : Lattice.Parts) {
         if (i.mob != TParticle::MobState::FREE) {
           Rg = Rg + (i.CSite.x * 0.5 - xmean) * (i.CSite.x * 0.5 - xmean)
-              + (i.CSite.y * 0.5 * sqrt(3) - ymean) * (i.CSite.y * 0.5 * sqrt(3) - ymean);
+             + (i.CSite.y * 0.5 * sqrt(3) - ymean) * (i.CSite.y * 0.5 * sqrt(3) - ymean);
         }
       }
 
-      Rg = sqrt(Rg / Nfix);
+      Rg2=xmean2/Nfix - (xmean/Nfix)*(xmean/Nfix) + ymean2/Nfix - (ymean/Nfix)*(ymean/Nfix);
 
-      fprintf(fp1, "%e \t %d \n", Rg, Nfix);
+      Rg = Rg / Nfix;
+
+      fprintf(fp1, "%e \t %e \t %e \t %d \n", Rg, Rg2, Lattice.Rg2, Nfix);
       fflush(fp1);
 
 #if DISPLAY_SIMULATION

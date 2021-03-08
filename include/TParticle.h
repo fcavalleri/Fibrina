@@ -52,7 +52,6 @@ public:
   //Class Methods
   //! Make a step forward in time
   bool Evolve();
-
   //Setter and Getter
   //! Set in the Lattice the Index of the particle in his Sites position
   void SetParticlePosition();
