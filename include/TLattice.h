@@ -28,9 +28,6 @@ public:
   std::vector<TParticle> Parts;
   //! Number of YL and DL links
   int nYL, nDL;
-  //! Compute sum and squared sum of xs and ys to calc baricentre and square gyration radius of polimer
-  double sumx, sumy, sumx2, sumy2;
-  double Rg2;
 
   //Class Methods
   //! Fill the Lattice whit pN Particles

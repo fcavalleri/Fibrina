@@ -17,9 +17,9 @@ static constexpr int N_PART = 100;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 500000;
+static constexpr int T_MAX = 50000;
 static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 100; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
 #define DISPLAY_SIMULATION false
 
@@ -38,13 +38,34 @@ int main() {
   using namespace parameters;
 
   // Files where save analysis
-    std::string rawdata("RawDataT");
-    rawdata.append(std::to_string(T_MAX)).append("VIEW")
+
+    std::string rawdataP("RawDataParameters");
+    rawdataP.append("_210309_1").append(".txt");
+    std::ofstream outputP(rawdataP);
+
+    outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
+    "Grid dimension x: " << GRID_LEN_X * 0.5 * 43 * 0.001 << "um (" << GRID_LEN_X << " steps) \n" <<
+    "Grid dimension y: " << GRID_LEN_Y * 0.5 * sqrt(3) * 43 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
+    "Initial number of particles: " << N_PART << "\n" <<
+    "Total time of simulation: " << T_MAX * 0.00001 << " s (" << T_MAX << " steps) \n\n" <<
+    "Particles parameters" << "\n\n" <<
+    "Translational Diffusion Rate: " << TRANSL_RATE <<
+    "ZY Rotational Diffusion Rate: " << ZY_ROT_RATE <<
+    "X Rotational Diffusion Rate: " << X_ROT_RATE <<
+    "Simultaneous A & B sites Activation Rate: " << ACT_TRESH <<
+    "YL to DS Closing rate: " << CLO_TRESH;
+
+
+
+
+    std::string rawdata("RawData_Tmax");
+    rawdata.append("_210309_1").append(".txt");
+    std::ofstream output(rawdata);
+
+    std::string nYLnDL("nYlnDL_Tmax");
+    nYLnDL.append(std::to_string(T_MAX)).append("_Every")
             .append(std::to_string(VIEW)).append(".txt");
-
-
-  FILE *fp1 = fopen("RawData", "w"); //coordinates and orientation of particles in the
-  FILE *fp2 = fopen("nYLnDL", "w"); //number of YL and DL links
+    std::ofstream outputYLDL(nYLnDL);
 
 #if DISPLAY_SIMULATION
   // Create the Render Window
@@ -83,21 +104,19 @@ int main() {
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
 
-      fprintf(fp2, "%d \t %d \t %d \n", t, Lattice.nYL, Lattice.nYL);
-      fflush(fp2);
-
 #if DISPLAY_SIMULATION
       app.clear();
       app.draw(Lattice);
 #endif
-        std::ofstream output(rawdata);
+
+        outputYLDL << Lattice.nYL << "\t" << Lattice.nDL << "\n";
+
         output << "\n";
         for (auto i : Lattice.Parts) {
             if (i.mob != TParticle::MobState::FREE) {
                 output << i.LSite << " " << i.CSite << " " << i.RSite << " " << i.Spin << "\n";
             }
         }
-        output << "\n";
 
 #if DISPLAY_SIMULATION
       // Display Parts positions
