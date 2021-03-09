@@ -36,8 +36,14 @@ static constexpr double DL2YL_RATE = 0;
 
 int main() {
   using namespace parameters;
+
   // Files where save analysis
-  FILE *fp1 = fopen("NfixRg", "w"); //particles in aggregate and Gyration Radius
+    std::string rawdata("RawDataT");
+    rawdata.append(std::to_string(T_MAX)).append("VIEW")
+            .append(std::to_string(VIEW)).append(".txt");
+
+
+  FILE *fp1 = fopen("RawData", "w"); //coordinates and orientation of particles in the
   FILE *fp2 = fopen("nYLnDL", "w"); //number of YL and DL links
 
 #if DISPLAY_SIMULATION
@@ -84,47 +90,14 @@ int main() {
       app.clear();
       app.draw(Lattice);
 #endif
-
-      //TODO: move this computation elsewhere (e.g. in TLattice)
-      int Nfix = 0;
-      double Rg = 0;
-      double Rg2 = 0;
-      double xmean = 0;
-      double ymean = 0;
-      double xmean2 = 0;
-      double ymean2 = 0;
-
-      for (auto &i : Lattice.Parts) {
-        if (i.mob != TParticle::MobState::FREE) {
-          // Compute baricenter
-          xmean = xmean + (i.CSite.x) * 0.5;
-          ymean = ymean + i.CSite.y * 0.5 * sqrt(3);
-          xmean2 = xmean2 + (i.CSite.x) * 0.5*(i.CSite.x) * 0.5;
-          ymean2 = ymean2 + i.CSite.y * 0.5 * sqrt(3)*i.CSite.y * 0.5 * sqrt(3);
-          Nfix = Nfix + 1;
+        std::ofstream output(rawdata);
+        output << "\n";
+        for (auto i : Lattice.Parts) {
+            if (i.mob != TParticle::MobState::FREE) {
+                output << i.LSite << " " << i.CSite << " " << i.RSite << " " << i.Spin << "\n";
+            }
         }
-      }
-
-        //fprintf(fp1, "%e \t %e \t %e \t %e \t %d \n", xmean2, Lattice.sumx2, ymean2, Lattice.sumy2, Nfix);
-        //fflush(fp1);
-
-      Rg2=xmean2/Nfix - (xmean/Nfix)*(xmean/Nfix) + ymean2/Nfix - (ymean/Nfix)*(ymean/Nfix);
-
-      xmean = xmean / Nfix;
-      ymean = ymean / Nfix;
-
-      // Compute Rg^2
-      for (auto &i : Lattice.Parts) {
-        if (i.mob != TParticle::MobState::FREE) {
-          Rg = Rg + (i.CSite.x * 0.5 - xmean) * (i.CSite.x * 0.5 - xmean)
-             + (i.CSite.y * 0.5 * sqrt(3) - ymean) * (i.CSite.y * 0.5 * sqrt(3) - ymean);
-        }
-      }
-
-      Rg = Rg / Nfix;
-
-      fprintf(fp1, "%e \t %e \t %e \t %d \n", Rg, Rg2, Lattice.Rg2, Nfix);
-      fflush(fp1);
+        output << "\n";
 
 #if DISPLAY_SIMULATION
       // Display Parts positions

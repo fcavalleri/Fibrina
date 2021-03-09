@@ -148,7 +148,7 @@ bool TParticle::CheckJoinWithCSite(TParticle &other) {
     if (other.Spin == (Spin + 3) % 6) {
       //whit a rate DL2YL_RATE, switch to YLA
       if (ranMT() < DL2YL_RATE) {
-        Spin = (Spin - 1) % 6;
+        Spin = (Spin - 1 +6) % 6;
         YLA(other);
 #if PARTICLE_LOGGING
           std::cout << "YL at his A of " << *this << " and " << other << std::endl;
@@ -351,7 +351,7 @@ void TParticle::CheckCloseYLB(TParticle &pPart) {
 
   ClearParticlePosition();
 
-  Spin = (Spin - 1) % 6;
+  Spin = (Spin - 1 + 6) % 6;
   RecalcExtSites();
   is_freeL = false;
   LinkedWith[0] = pPart.Index;
@@ -400,7 +400,7 @@ void TParticle::CheckCloseYLR(TParticle &pPart) {
   ClearParticlePosition();
 
   CSite.Translate(dx[(Spin + 1) % 6], dy[(Spin + 1) % 6]);
-  Spin = (Spin - 1) % 6;
+  Spin = (Spin - 1 + 6) % 6;
   RecalcExtSites();
   is_activeA = false;
   LinkedWith[2] = pPart.Index;
