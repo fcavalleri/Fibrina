@@ -93,6 +93,7 @@ int main() {
       double ymean = 0;
       double xmean2 = 0;
       double ymean2 = 0;
+
       for (auto &i : Lattice.Parts) {
         if (i.mob != TParticle::MobState::FREE) {
           // Compute baricenter
@@ -107,6 +108,8 @@ int main() {
         //fprintf(fp1, "%e \t %e \t %e \t %e \t %d \n", xmean2, Lattice.sumx2, ymean2, Lattice.sumy2, Nfix);
         //fflush(fp1);
 
+      Rg2=xmean2/Nfix - (xmean/Nfix)*(xmean/Nfix) + ymean2/Nfix - (ymean/Nfix)*(ymean/Nfix);
+
       xmean = xmean / Nfix;
       ymean = ymean / Nfix;
 
@@ -117,8 +120,6 @@ int main() {
              + (i.CSite.y * 0.5 * sqrt(3) - ymean) * (i.CSite.y * 0.5 * sqrt(3) - ymean);
         }
       }
-
-      Rg2=xmean2/Nfix - (xmean/Nfix)*(xmean/Nfix) + ymean2/Nfix - (ymean/Nfix)*(ymean/Nfix);
 
       Rg = Rg / Nfix;
 
