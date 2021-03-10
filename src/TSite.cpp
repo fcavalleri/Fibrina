@@ -22,7 +22,7 @@ void TSite::Translate(int dx, int dy) {
 }
 
 std::ostream &operator<<(std::ostream &os, const TSite &me) {
-  return os <<  me.x << " " << me.y;
+  return os <<  me.x << "\t" << me.y;
 }
 
 bool operator==(const TSite &a, const TSite &b) {
