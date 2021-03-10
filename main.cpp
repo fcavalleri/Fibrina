@@ -34,7 +34,7 @@ static constexpr double CLO_TRESH = 0.004;
 static constexpr double DL2YL_RATE = 0;
 }
 
-int main() {
+int main(int argc, char*argv[] ) {
   using namespace parameters;
 
   // Files where save analysis
@@ -58,10 +58,12 @@ int main() {
     "YL to DS Closing rate: " << CLO_TRESH << "\n\n" <<
     "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps):" << std::endl;
 
-    std::string rawdata("RawData");
-    rawdata.append("_210309_1").append(".txt");
-    std::ofstream output(rawdata);
+    std::string extension = "";
+    if (argc==2) extension = std::string(argv[1]);
 
+    std::string rawdata("RawData");
+    rawdata.append("10Mar2020").append(extension).append(".txt");
+    std::ofstream output(rawdata);
 
     std::string nYLnDL("nYlnDL");
     nYLnDL.append(std::to_string(T_MAX)).append("_Every")
@@ -94,7 +96,7 @@ int main() {
   Lattice.SetForDLA();
 
 // Set Raw Data Header
-  output << "Iteration\tXc\tYc\tOrientation\n";
+  output << "Time\tXc\tYc\tOrientation\n";
 
 // Time Evolution
   for (int t : tq::trange(T_MAX)) {
