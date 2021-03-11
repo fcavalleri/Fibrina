@@ -59,7 +59,7 @@ bool TLattice::Evolve() {
     if (Parts[j].Evolve()) {
         // Particles in polimer
         Nfix++;
-        if (Nfix > MAX_Nfix || OutofGrid) return true;
+        if (Nfix > (MAX_Nfix-1) || OutofGrid) return true;
         //Add new particle to preserve free monomer concentration
         RandomFill(1);
     };

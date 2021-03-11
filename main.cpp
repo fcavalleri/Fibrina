@@ -16,11 +16,11 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static constexpr int N_PART = 75;
+static constexpr int N_PART = 85;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 700000;
+static constexpr int T_MAX = 800000;
 static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 5000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.004;
+static constexpr double CLO_TRESH = 0.006;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -102,7 +102,7 @@ int main(int argc, char*argv[] ) {
   Lattice.MAX_Nfix=N_FIX_MAX;
 
 // Set Raw Data Header
-  output << "Time\tXc\tYc\tOrientation\n";
+  output << "Time\tPol\tXc\tYc\tOrien\tXl\tYl\tXr\tYr\n";
   outputYLDL <<"Time\tnYl\tnDS\n";
 
 // Time Evolution
@@ -128,9 +128,10 @@ int main(int argc, char*argv[] ) {
 
         outputYLDL << t << "\t" << Lattice.nYL << "\t" << Lattice.nDL << std::endl;
 
+        output << "\n";
         for (auto i : Lattice.Parts) {
             if (i.mob != TParticle::MobState::FREE) {
-                output << t << "\t"<< i.CSite << "\t" << i.Spin << std::endl;
+                output << t << "\t1\t "<< i.CSite << "\t" << i.Spin << "\t" << i.LSite << "\t" << i.RSite << std::endl;
             }
         }
 
