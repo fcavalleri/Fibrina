@@ -24,6 +24,8 @@ public:
   int N;
   //! Number of particles in the polimer
   int Nfix;
+  //! Max number of particles in the aggregate
+  inline static int MAX_Nfix;
   //! The Lattice own as a member the vector of All Parts
   std::vector<TParticle> Parts;
   //! Number of YL and DL links
@@ -36,7 +38,7 @@ public:
   void SetForDLA();
 
   //! Make a time step forwar for all the system
-  void Evolve();
+  bool Evolve();
 
   //! The Lattice is composed by Grid Elements made up with an int (the Index of the Particle if present) and the bool Is_Central
   //typedef mtx::small_vector<uint16_t> GridElement; // type def

@@ -21,10 +21,11 @@ static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
 static constexpr int T_MAX = 700000;
+static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 5000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
-#define DISPLAY_SIMULATION false
+#define DISPLAY_SIMULATION true
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
@@ -47,7 +48,7 @@ int main(int argc, char*argv[] ) {
     if (argc==2) extension = std::string(argv[1]);
 
     std::string rawdataP("RawDataParameters_");
-    rawdataP.append(currentDateTime()).append("_").append(extension).append(".txt");
+    rawdataP.append(currentDateTime()).append("_").append(".txt");
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
@@ -98,6 +99,9 @@ int main(int argc, char*argv[] ) {
 // Set for the DLA simulation
   Lattice.SetForDLA();
 
+// Set a limit for simulation
+  Lattice.MAX_Nfix=N_FIX_MAX;
+
 // Set Raw Data Header
   output << "Time\tXc\tYc\tOrientation\n";
   outputYLDL <<"Time\tnYl\tnDS\n";
@@ -109,7 +113,7 @@ int main(int argc, char*argv[] ) {
     if constexpr(MSEC_WAIT)usleep(MSEC_WAIT * 1000);
 
     // Ask the Lattice to Evolve all the System by a time step
-    Lattice.Evolve();
+    if (Lattice.Evolve()) return 0;
 
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
@@ -153,7 +157,7 @@ int main(int argc, char*argv[] ) {
     }
   }
 #endif
-  outputP << "\n Final Number of particles in polimer: " << Lattice.Nfix;
+
   return 0;
 }
 

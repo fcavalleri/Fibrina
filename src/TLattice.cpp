@@ -52,29 +52,19 @@ void TLattice::SetForDLA() {
   Nfix=1;
 }
 
-void TLattice::Evolve() {
+bool TLattice::Evolve() {
   //For N times, chose a random particle from Parts vector and Evolve it
   for (int i = 0; i < N; i++) {
       int j=randM(N);
     if (Parts[j].Evolve()) {
         // Particles in polimer
         Nfix++;
+        if (Nfix > MAX_Nfix) return true;
         //Add new particle to preserve free monomer concentration
         RandomFill(1);
     };
   }
-
-  /*for (auto &i : Parts){
-  //It's necessary another cycle to draw all particles, no matters if they have moved or not in this moment
-      sf::Vertex monomeroC=sf::Vertex(sf::Vector2f(i.CSite.x,i.CSite.y), sf::Color::Red);
-      app->draw(&monomeroC,1,sf::Points);
-
-      sf::Vertex monomeroS=sf::Vertex(sf::Vector2f(i.LSite.x,i.LSite.y), sf::Color::White);
-      app->draw(&monomeroS,1,sf::Points);
-
-      sf::Vertex monomeroD=sf::Vertex(sf::Vector2f(i.RSite.x,i.RSite.y), sf::Color::White);
-      app->draw(&monomeroD,1,sf::Points);
-      }*/
+    return false;
 }
 
 void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
