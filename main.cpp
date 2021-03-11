@@ -25,7 +25,7 @@ static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 5000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
-#define DISPLAY_SIMULATION true
+#define DISPLAY_SIMULATION false
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.010;
+static constexpr double CLO_TRESH = 0.004;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -48,7 +48,7 @@ int main(int argc, char*argv[] ) {
     if (argc==2) extension = std::string(argv[1]);
 
     std::string rawdataP("RawDataParameters_");
-    rawdataP.append(currentDateTime()).append("_").append(".txt");
+    rawdataP.append(currentDateTime()).append("_").append(extension).append(".txt");
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
@@ -56,7 +56,6 @@ int main(int argc, char*argv[] ) {
     "Grid dimension y: " << GRID_LEN_Y * 0.5 * sqrt(3) * 43 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
     "Initial number of particles: " << N_PART << "\n" <<
     "Reinjection every link event to keep constant free particles concentration: TRUE \n" <<
-    "Total time of simulation: " << T_MAX * 0.00001 << " s (" << T_MAX << " steps) \n\n" <<
     "Particles parameters" << "\n\n" <<
     "Translational Diffusion Rate: " << TRANSL_RATE << "\n" <<
     "ZY Rotational Diffusion Rate: " << ZY_ROT_RATE << "\n" <<
@@ -64,7 +63,7 @@ int main(int argc, char*argv[] ) {
     "Simultaneous A & B sites Activation Rate: " << ACT_TRESH << "\n" <<
     "DS to YL in Formation Correction rate: " << DL2YL_RATE << "\n" <<
     "YL to DS Closing rate: " << CLO_TRESH << "\n\n" <<
-    "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps):" << std::endl;
+    "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps)" << std::endl;
 
     std::string rawdata("RawData_");
     rawdata.append(currentDateTime()).append("_").append(extension).append(".txt");
@@ -113,7 +112,11 @@ int main(int argc, char*argv[] ) {
     if constexpr(MSEC_WAIT)usleep(MSEC_WAIT * 1000);
 
     // Ask the Lattice to Evolve all the System by a time step
-    if (Lattice.Evolve()) return 0;
+    if (Lattice.Evolve()) {
+        outputP << "Total time of simulation: " << t * 0.00001 << " s (" << t << " steps) \n" <<
+                "Number of monomers in the aggregate: " << Lattice.Nfix;
+        return 0;
+    }
 
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
@@ -157,6 +160,9 @@ int main(int argc, char*argv[] ) {
     }
   }
 #endif
+
+  outputP << "Total time of simulation: " << T_MAX * 0.00001 << " s (" << T_MAX << " steps) \n" <<
+  "Number of monomers in the aggregate: " << Lattice.Nfix;
 
   return 0;
 }
