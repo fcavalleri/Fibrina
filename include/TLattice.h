@@ -26,6 +26,8 @@ public:
   int Nfix;
   //! Max number of particles in the aggregate
   inline static int MAX_Nfix;
+  //! True if a particles of the aggregates is on the border
+  bool OutofGrid;
   //! The Lattice own as a member the vector of All Parts
   std::vector<TParticle> Parts;
   //! Number of YL and DL links

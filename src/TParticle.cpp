@@ -46,19 +46,19 @@ bool TParticle::Evolve() {
 
       for (int i : Lattice->GetSiteIndexes(CSite)) {
         if (i != Index) {
-          if (CheckJoinWithCSite(Lattice->GetParticle(i))) JustJoined = true;
+          if (CheckJoinWithCSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
         }
       }
 
       for (int i : Lattice->GetSiteIndexes(RSite)) {
         if (i != Index) {
-          if (CheckJoinWithRSite(Lattice->GetParticle(i))) JustJoined = true;
+          if (CheckJoinWithRSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
         }
       }
 
       for (int i : Lattice->GetSiteIndexes(LSite)) {
         if (i != Index) {
-          if (CheckJoinWithLSite(Lattice->GetParticle(i))) JustJoined = true;
+          if (CheckJoinWithLSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
         }
       }
 
@@ -69,7 +69,7 @@ bool TParticle::Evolve() {
 
     case MobState::LINKED: {
       if (LinkedWith[1] == -1 && LinkedWith[2] == -1) TryActivateAB();
-      CheckClose();
+      if(CheckClose()) CheckBorder();
       break;
     }
 
@@ -305,24 +305,26 @@ void TParticle::YLR(TParticle &other) {
   Lattice->nYL++;
 }
 
-void TParticle::CheckClose() {
+bool TParticle::CheckClose() {
+    bool Closed= false;
   if (!is_freeL) {
-    CheckCloseYLL(Lattice->GetParticle(LinkedWith[0]));
+    if (CheckCloseYLL(Lattice->GetParticle(LinkedWith[0]))) Closed=true;
   }
   if (!is_activeB) {
-    CheckCloseYLB(Lattice->GetParticle(LinkedWith[1]));
+    if (CheckCloseYLB(Lattice->GetParticle(LinkedWith[1]))) Closed=true;
   }
   if (!is_activeA) {
-    CheckCloseYLA(Lattice->GetParticle(LinkedWith[2]));
+    if (CheckCloseYLA(Lattice->GetParticle(LinkedWith[2]))) Closed=true;
   }
   if (!is_freeR) {
-    CheckCloseYLR(Lattice->GetParticle(LinkedWith[3]));
+    if (CheckCloseYLR(Lattice->GetParticle(LinkedWith[3]))) Closed=true;
   }
+  return Closed;
 }
 
-void TParticle::CheckCloseYLL(TParticle &pPart) {
-  if (!is_activeB || !pPart.is_freeL) return;
-  if (ranMT() > CLO_TRESH) return;
+bool TParticle::CheckCloseYLL(TParticle &pPart) {
+  if (!is_activeB || !pPart.is_freeL) return false;
+  if (ranMT() > CLO_TRESH) return false;
 
   ClearParticlePosition();
 
@@ -343,11 +345,12 @@ void TParticle::CheckCloseYLL(TParticle &pPart) {
 #if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 #endif
+  return true;
 }
 
-void TParticle::CheckCloseYLB(TParticle &pPart) {
-  if (!is_freeL || !pPart.is_activeB) return;
-  if (ranMT() > CLO_TRESH) return;
+bool TParticle::CheckCloseYLB(TParticle &pPart) {
+  if (!is_freeL || !pPart.is_activeB) return false;
+  if (ranMT() > CLO_TRESH) return false;
 
   ClearParticlePosition();
 
@@ -367,11 +370,12 @@ void TParticle::CheckCloseYLB(TParticle &pPart) {
 #if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 #endif
+  return true;
 }
 
-void TParticle::CheckCloseYLA(TParticle &pPart) {
-  if (!is_freeR || !pPart.is_activeA) return;
-  if (ranMT() > CLO_TRESH) return;
+bool TParticle::CheckCloseYLA(TParticle &pPart) {
+  if (!is_freeR || !pPart.is_activeA) return false;
+  if (ranMT() > CLO_TRESH) return false;
 
   ClearParticlePosition();
 
@@ -391,11 +395,12 @@ void TParticle::CheckCloseYLA(TParticle &pPart) {
 #if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 #endif
+  return true;
 }
 
-void TParticle::CheckCloseYLR(TParticle &pPart) {
-  if (!is_activeA || !pPart.is_freeR) return;  //first check if there are closing conditions
-  if (ranMT() > CLO_TRESH) return; //if there are, close with a rate CLO_RATE
+bool TParticle::CheckCloseYLR(TParticle &pPart) {
+  if (!is_activeA || !pPart.is_freeR) return false;  //first check if there are closing conditions
+  if (ranMT() > CLO_TRESH) return false; //if there are, close with a rate CLO_RATE
 
   ClearParticlePosition();
 
@@ -416,6 +421,7 @@ void TParticle::CheckCloseYLR(TParticle &pPart) {
 #if PARTICLE_LOGGING
   std::cout << "Closing! Of " << *this << " over " << pPart << std::endl;
 #endif
+  return true;
 }
 
 void TParticle::SetParticlePosition() {
@@ -446,4 +452,8 @@ std::ostream &operator<<(std::ostream &os, const TParticle &me) {
   os << " Spin:" << me.Spin << me.mob << " Parts Linked in L-B-A-R: " << me.LinkedWith[0] << "/" << me.LinkedWith[1] <<
      "/" << me.LinkedWith[2] << "/" << me.LinkedWith[3] << " ";
   return os;
+}
+
+void TParticle::CheckBorder() {
+ if (CSite.x < 2 || CSite.x > (Lx- 3) || CSite.y < 1 || CSite.y > (Ly-2) ) Lattice->OutofGrid=true;
 }

@@ -99,11 +99,14 @@ private:
   void YLR(TParticle &pPart);
 
   //! If it's possible a closure over the input particle, occurs
-  void CheckClose();
-  void CheckCloseYLA(TParticle &pPart);
-  void CheckCloseYLB(TParticle &pPart);
-  void CheckCloseYLR(TParticle &pPart);
-  void CheckCloseYLL(TParticle &pPart);
+  bool CheckClose();
+  bool CheckCloseYLA(TParticle &pPart);
+  bool CheckCloseYLB(TParticle &pPart);
+  bool CheckCloseYLR(TParticle &pPart);
+  bool CheckCloseYLL(TParticle &pPart);
+
+  //! Check if a new added monomer in the aggregate is on the border
+  void CheckBorder();
 };
 
 #endif // TPARTICLE_H

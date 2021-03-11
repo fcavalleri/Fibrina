@@ -3,7 +3,7 @@
 static constexpr int Lx = TSite::Lx, Ly = TSite::Ly;
 
 TLattice::TLattice() :  /*Grid(Lx, std::vector<GridElement>(Ly)),*/
-N(0), Nfix(0), nYL(0), nDL(0) //Initialize
+N(0), Nfix(0), nYL(0), nDL(0), OutofGrid(false) //Initialize
 {
   // Set static parameters for TParticle and TSite classes
   TParticle::Lattice = this; //this è il puntatore all'istanza corrente della classe
@@ -59,7 +59,7 @@ bool TLattice::Evolve() {
     if (Parts[j].Evolve()) {
         // Particles in polimer
         Nfix++;
-        if (Nfix > MAX_Nfix) return true;
+        if (Nfix > MAX_Nfix || OutofGrid) return true;
         //Add new particle to preserve free monomer concentration
         RandomFill(1);
     };

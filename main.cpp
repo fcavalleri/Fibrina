@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.004;
+static constexpr double CLO_TRESH = 0.010;
 static constexpr double DL2YL_RATE = 0;
 
 }
