@@ -9,6 +9,9 @@
 #include <iostream>
 #include <fstream>
 #include "tqdm.hpp"
+#include <string>
+
+const std::string currentDateTime();
 
 namespace parameters {
 // Define system parameters
@@ -32,6 +35,7 @@ static constexpr double LEN_WIDHT_RATIO = 0.1;
 static constexpr double ACT_TRESH = 0.0012;
 static constexpr double CLO_TRESH = 0.004;
 static constexpr double DL2YL_RATE = 0;
+
 }
 
 int main(int argc, char*argv[] ) {
@@ -39,8 +43,11 @@ int main(int argc, char*argv[] ) {
 
   // Files where save analysis
 
-    std::string rawdataP("RawDataParameters");
-    rawdataP.append("_210309_1").append(".txt");
+    std::string extension = "";
+    if (argc==2) extension = std::string(argv[1]);
+
+    std::string rawdataP("RawDataParameters_");
+    rawdataP.append(currentDateTime()).append("_").append(extension).append(".txt");
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
@@ -58,16 +65,12 @@ int main(int argc, char*argv[] ) {
     "YL to DS Closing rate: " << CLO_TRESH << "\n\n" <<
     "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps):" << std::endl;
 
-    std::string extension = "";
-    if (argc==2) extension = std::string(argv[1]);
-
-    std::string rawdata("RawData");
-    rawdata.append("10Mar2020").append(extension).append(".txt");
+    std::string rawdata("RawData_");
+    rawdata.append(currentDateTime()).append("_").append(extension).append(".txt");
     std::ofstream output(rawdata);
 
-    std::string nYLnDL("nYlnDL");
-    nYLnDL.append(std::to_string(T_MAX)).append("_Every")
-            .append(std::to_string(VIEW)).append(".txt");
+    std::string nYLnDL("nYlnDL_");
+    nYLnDL.append(currentDateTime()).append("_").append(extension).append(".txt");
     std::ofstream outputYLDL(nYLnDL);
 
 #if DISPLAY_SIMULATION
@@ -97,6 +100,7 @@ int main(int argc, char*argv[] ) {
 
 // Set Raw Data Header
   output << "Time\tXc\tYc\tOrientation\n";
+  outputYLDL <<"Time\tnYl\tnDS\n";
 
 // Time Evolution
   for (int t : tq::trange(T_MAX)) {
@@ -115,7 +119,7 @@ int main(int argc, char*argv[] ) {
       app.draw(Lattice);
 #endif
 
-        outputYLDL << Lattice.nYL << "\t" << Lattice.nDL << std::endl;
+        outputYLDL << t << "\t" << Lattice.nYL << "\t" << Lattice.nDL << std::endl;
 
         for (auto i : Lattice.Parts) {
             if (i.mob != TParticle::MobState::FREE) {
@@ -149,5 +153,18 @@ int main(int argc, char*argv[] ) {
     }
   }
 #endif
+  outputP << "\n Final Number of particles in polimer: " << Lattice.Nfix;
   return 0;
+}
+
+const std::string currentDateTime() {
+    time_t     now = time(0);
+    struct tm  tstruct;
+    char       buf[80];
+    tstruct = *localtime(&now);
+    // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
+    // for more information about date/time format
+    strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
+
+    return buf;
 }
