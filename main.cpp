@@ -52,8 +52,8 @@ int main(int argc, char*argv[] ) {
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
-    "Grid dimension x: " << GRID_LEN_X * 0.5 * 43 * 0.001 << "um (" << GRID_LEN_X << " steps) \n" <<
-    "Grid dimension y: " << GRID_LEN_Y * 0.5 * sqrt(3) * 43 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
+    "Grid dimension x: " << GRID_LEN_X * 0.25 * 43 * 0.001 << "um (" << GRID_LEN_X << " steps) \n" <<
+    "Grid dimension y: " << GRID_LEN_Y * 0.25 * sqrt(3) * 43 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
     "Initial number of particles: " << N_PART << "\n" <<
     "Reinjection every link event to keep constant free particles concentration: TRUE \n" <<
     "Particles parameters" << "\n\n" <<
@@ -176,6 +176,5 @@ const std::string currentDateTime() {
     // Visit http://en.cppreference.com/w/cpp/chrono/c/strftime
     // for more information about date/time format
     strftime(buf, sizeof(buf), "%Y-%m-%d", &tstruct);
-
     return buf;
 }
