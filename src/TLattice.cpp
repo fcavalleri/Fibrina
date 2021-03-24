@@ -61,7 +61,7 @@ bool TLattice::Evolve() {
         Nfix++;
         if (Nfix > (MAX_Nfix-1) || OutofGrid) return true;
         //Add new particle to preserve free monomer concentration
-        RandomFill(1);
+        //RandomFill(1);
     };
   }
     return false;
@@ -94,9 +94,8 @@ TParticle &TLattice::GetParticle(int pIndex) {
 
 void TLattice::draw(sf::RenderTarget &target, sf::RenderStates states) const {
   for (auto &i : Parts) {
-    //if (i.mob != TParticle::MobState::FREE) {
-      //TODO: fix bug when monomer is on the border
-      if (!(i.CSite.x < 2 || i.CSite.x > (Lx- 3) || i.CSite.y < 1 || i.CSite.y > (Ly-2) )) {
+    if (i.mob != TParticle::MobState::FREE) {
+    //if (!(i.CSite.x < 2 || i.CSite.x > (Lx- 3) || i.CSite.y < 1 || i.CSite.y > (Ly-2) )) {
           sf::Vertex monomer[] = {sf::Vertex(sf::Vector2f(i.LSite.x, i.LSite.y)),
                                   sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y))};
           target.draw(monomer, 2, sf::Lines, states);

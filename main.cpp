@@ -16,14 +16,14 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static constexpr int N_PART = 1000;
+static constexpr int N_PART = 6000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 80000;
-static constexpr int N_FIX_MAX = 100;
+static constexpr int T_MAX = 100000;
+static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 1; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
 #define DISPLAY_SIMULATION true
 
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.006;
+static constexpr double CLO_TRESH = 0.1;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -52,10 +52,11 @@ int main(int argc, char*argv[] ) {
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
-    "Grid dimension x: " << GRID_LEN_X * 0.25 * 43 * 0.001 << "um (" << GRID_LEN_X << " steps) \n" <<
-    "Grid dimension y: " << GRID_LEN_Y * 0.25 * sqrt(3) * 43 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
+    "Grid dimension x: " << GRID_LEN_X * 0.25 * 45 * 0.001 << "um (" << GRID_LEN_X << " steps) \n" <<
+    "Grid dimension y: " << GRID_LEN_Y * 0.25 * sqrt(3) * 45 * 0.001 << " um (" << GRID_LEN_Y << " steps) \n" <<
     "Initial number of particles: " << N_PART << "\n" <<
-    "Reinjection every link event to keep constant free particles concentration: TRUE \n" <<
+    "Initial free monomer concentration: " << N_PART / (GRID_LEN_X * 0.25 * 45 * 0.001 * GRID_LEN_Y * 0.25 * sqrt(3) * 45 * 0.001) << " N/um^2\n" <<
+    "Reinjection every link event to keep constant free particles concentration: FALSE \n" <<
     "Particles parameters" << "\n\n" <<
     "Translational Diffusion Rate: " << TRANSL_RATE << "\n" <<
     "ZY Rotational Diffusion Rate: " << ZY_ROT_RATE << "\n" <<

@@ -12,7 +12,7 @@ public:
 
   //Class Members
   //! Linear dimension of the grid
-  static constexpr int Lx = 600, Ly = 300;
+  static constexpr int Lx = 1100, Ly = 650;
 
   //! Site coordinates.
   //! Be careful: this are lattice coordinate that should be rescaled in real world by...
