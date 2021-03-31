@@ -20,12 +20,12 @@ static constexpr int N_PART = 3000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 100000;
+static constexpr int T_MAX = 30000;
 static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 5000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
-#define DISPLAY_SIMULATION false
+#define DISPLAY_SIMULATION true
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
@@ -74,6 +74,10 @@ int main(int argc, char*argv[] ) {
     nYLnDL.append(currentDateTime()).append("_").append(extension).append(".txt");
     std::ofstream outputYLDL(nYLnDL);
 
+    std::string fincor("FinalCoord_");
+    fincor.append(currentDateTime()).append("_").append(extension).append(".txt");
+    std::ofstream finoutput(fincor);
+
 #if DISPLAY_SIMULATION
   // Create the Render Window
   sf::RenderWindow app(sf::VideoMode(GRID_LEN_X, GRID_LEN_Y), "Simulazione Aggregazione Fibrina");
@@ -116,6 +120,13 @@ int main(int argc, char*argv[] ) {
     if (Lattice.Evolve()) {
         outputP << "Total time of simulation: " << t * 0.00001 << " s (" << t << " steps) \n" <<
                 "Number of monomers in the aggregate: " << Lattice.Nfix;
+
+        for (auto i : Lattice.Parts) {
+            if (i.mob != TParticle::MobState::FREE) {
+                finoutput <<  i.CSite << std::endl;
+            }
+        }
+
         return 0;
     }
 
