@@ -20,10 +20,10 @@ static constexpr int N_PART = 3000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 30000;
+static constexpr int T_MAX = 15000;
 static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
 #define DISPLAY_SIMULATION true
 
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.1;
+static constexpr double CLO_TRESH = 0.2;
 static constexpr double DL2YL_RATE = 0;
 
 }
