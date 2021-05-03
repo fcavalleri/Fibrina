@@ -16,16 +16,16 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static constexpr int N_PART = 3000;
+static constexpr int N_PART = 4000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 15000;
-static constexpr int N_FIX_MAX = 1000;
+static constexpr int T_MAX = 30000;
+static constexpr int N_FIX_MAX = 650;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
-#define DISPLAY_SIMULATION true
+#define DISPLAY_SIMULATION false
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.1;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.2;
+static constexpr double CLO_TRESH = 0.5;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -45,10 +45,11 @@ int main(int argc, char*argv[] ) {
   // Files where save analysis
 
     std::string extension = "";
+
     if (argc==2) extension = std::string(argv[1]);
 
     std::string rawdataP("RawDataParameters_");
-    rawdataP.append(currentDateTime()).append("_").append(extension).append(".txt");
+    rawdataP.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
@@ -57,7 +58,7 @@ int main(int argc, char*argv[] ) {
     "Initial number of particles: " << N_PART << "\n" <<
     "Initial free monomer concentration: " << N_PART / (GRID_LEN_X * 0.25 * 45 * 0.001 * GRID_LEN_Y * 0.25 * sqrt(3) * 45 * 0.001) << " N/um^2\n" <<
     "Reinjection every link event to keep constant free particles concentration: FALSE \n" <<
-    "Particles parameters" << "\n\n" <<
+    "\nParticles parameters" << "\n\n" <<
     "Translational Diffusion Rate: " << TRANSL_RATE << "\n" <<
     "ZY Rotational Diffusion Rate: " << ZY_ROT_RATE << "\n" <<
     "X Rotational Diffusion Rate: " << X_ROT_RATE << "\n" <<
@@ -67,15 +68,15 @@ int main(int argc, char*argv[] ) {
     "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps)" << std::endl;
 
     std::string rawdata("RawData_");
-    rawdata.append(currentDateTime()).append("_").append(extension).append(".txt");
+    rawdata.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
     std::ofstream output(rawdata);
 
     std::string nYLnDL("nYlnDL_");
-    nYLnDL.append(currentDateTime()).append("_").append(extension).append(".txt");
+    nYLnDL.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
     std::ofstream outputYLDL(nYLnDL);
 
     std::string fincor("FinalCoord_");
-    fincor.append(currentDateTime()).append("_").append(extension).append(".txt");
+    fincor.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
     std::ofstream finoutput(fincor);
 
 #if DISPLAY_SIMULATION
@@ -123,7 +124,7 @@ int main(int argc, char*argv[] ) {
 
         for (auto i : Lattice.Parts) {
             if (i.mob != TParticle::MobState::FREE) {
-                finoutput <<  i.CSite << std::endl;
+                finoutput << i.CSite << "\t" << i.LSite << "\t" << i.RSite << "\t" << i.Spin << std::endl;
             }
         }
 
@@ -166,7 +167,7 @@ int main(int argc, char*argv[] ) {
       if (event.type == sf::Event::Closed)
         app.close();
       else {
-        app.clear();
+          app.clear();
         app.draw(Lattice);
         app.display();
       }
@@ -176,6 +177,12 @@ int main(int argc, char*argv[] ) {
 
   outputP << "Total time of simulation: " << T_MAX * 0.00001 << " s (" << T_MAX << " steps) \n" <<
   "Number of monomers in the aggregate: " << Lattice.Nfix;
+
+    for (auto i : Lattice.Parts) {
+        if (i.mob != TParticle::MobState::FREE) {
+            finoutput << i.CSite << "\t" << i.LSite << "\t" << i.RSite << "\t" << i.Spin << std::endl;
+        }
+    }
 
   return 0;
 }
