@@ -21,7 +21,7 @@ static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
 static constexpr int T_MAX = 30000;
-static constexpr int N_FIX_MAX = 650;
+static constexpr int N_FIX_MAX = 1000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
@@ -31,10 +31,10 @@ static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
 static constexpr double TRANSL_RATE = 0.9;
 
-static constexpr double LEN_WIDHT_RATIO = 0.1;
+static constexpr double LEN_WIDHT_RATIO = 0.3;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.5;
+static constexpr double CLO_TRESH = 0.4;
 static constexpr double DL2YL_RATE = 0;
 
 }
