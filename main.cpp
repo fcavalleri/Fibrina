@@ -16,7 +16,7 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static constexpr int N_PART = 4000;
+static int N_PART = 1000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
@@ -34,22 +34,35 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.3;
 
 static constexpr double ACT_TRESH = 0.0012;
-static constexpr double CLO_TRESH = 0.4;
+static double CLO_TRESH = 0.5;
 static constexpr double DL2YL_RATE = 0;
 
 }
 
-int main(int argc, char*argv[] ) {
+int main(int argc, char*argv[]) {
   using namespace parameters;
 
   // Files where save analysis
 
-    std::string extension = "";
+    std::string strCLO_TRESH = "";
+    std::string iteration = {};
 
-    if (argc==2) extension = std::string(argv[1]);
+    if (argc>=2) {
+        strCLO_TRESH = std::string(argv[1]);
+        CLO_TRESH = std::stod(strCLO_TRESH);
+    }
+
+    if (argc>=3) {
+        N_PART = std::stoi(std::string(argv[2]));
+    }
+
+    if (argc>=4) {
+        iteration =std::string(argv[3]);
+    }
 
     std::string rawdataP("RawDataParameters_");
-    rawdataP.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
+    rawdataP.append(iteration).append("_N=").append(std::to_string(N_PART)).append("_cl=").append(strCLO_TRESH).append(".txt");
+
     std::ofstream outputP(rawdataP);
 
     outputP << "Fibrin Aggregation Simulation: parameter's set" << "\n\n" <<
@@ -68,15 +81,15 @@ int main(int argc, char*argv[] ) {
     "Raw data taken every " << VIEW * 0.00001 << " s (" << VIEW << " steps)" << std::endl;
 
     std::string rawdata("RawData_");
-    rawdata.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
+    rawdata.append(iteration).append("_N=").append(std::to_string(N_PART)).append("_").append(strCLO_TRESH).append(".txt");
     std::ofstream output(rawdata);
 
     std::string nYLnDL("nYlnDL_");
-    nYLnDL.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
+    nYLnDL.append(iteration).append("_N=").append(std::to_string(N_PART)).append("_").append(strCLO_TRESH).append(".txt");
     std::ofstream outputYLDL(nYLnDL);
 
     std::string fincor("FinalCoord_");
-    fincor.append(currentDateTime()).append("_N=").append(std::to_string(N_PART)).append("_").append(extension).append(".txt");
+    fincor.append(iteration).append("_N=").append(std::to_string(N_PART)).append("_").append(strCLO_TRESH).append(".txt");
     std::ofstream finoutput(fincor);
 
 #if DISPLAY_SIMULATION
