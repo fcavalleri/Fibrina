@@ -22,6 +22,8 @@ public:
     if (it == data_.begin() + size_)return;
     *it = data_[--size_];
   }
+  uint8_t size() const noexcept { return size_; }
+  bool empty() const noexcept { return size_==0;}
   auto begin() const noexcept { return data_.cbegin(); }
   auto end() const noexcept { return data_.cbegin() + size_; }
 private:
