@@ -16,16 +16,16 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static int N_PART = 50000;
+static int N_PART = 5000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 100000;
-static constexpr int N_FIX_MAX = 10000;
-static constexpr int MSEC_WAIT = 0;
-static constexpr int VIEW = 300; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int T_MAX = 50000;
+static constexpr int N_FIX_MAX = 2000;
+static constexpr int MSEC_WAIT = 50;
+static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
-#define DISPLAY_SIMULATION false
+#define DISPLAY_SIMULATION true
 
 static constexpr double ZY_ROT_RATE = 1;
 static constexpr double X_ROT_RATE = 0.66;
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.3;
 
 static constexpr double ACT_TRESH = 0.0012;
-static double CLO_TRESH = 0.6;
+static double CLO_TRESH = 0.2;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -127,9 +127,6 @@ int main(int argc, char*argv[]) {
 // Time Evolution
   for (int t : tq::trange(T_MAX)) {
 
-    // Possibility of slowing down the simulation
-    if constexpr(MSEC_WAIT)usleep(MSEC_WAIT * 1000);
-
     // Ask the Lattice to Evolve all the System by a time step
     if (Lattice.Evolve()) {
         outputP << "Total time of simulation: " << t * 0.00001 << " s (" << t << " steps) \n" <<
@@ -146,6 +143,9 @@ int main(int argc, char*argv[]) {
 
     //Visualize Lattice every VIEW steps
     if (t % VIEW == 0) {
+
+        // Possibility of slowing down the simulation
+        if constexpr(MSEC_WAIT != 0)usleep(MSEC_WAIT * 1000);
 
 #if DISPLAY_SIMULATION
       app.clear();
