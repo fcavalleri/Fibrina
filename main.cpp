@@ -16,14 +16,14 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static int N_PART = 5000;
+static int N_PART = 4000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 50000;
-static constexpr int N_FIX_MAX = 2000;
-static constexpr int MSEC_WAIT = 50;
-static constexpr int VIEW = 1000; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
+static constexpr int T_MAX = 100000;
+static constexpr int N_FIX_MAX = 1500;
+static constexpr int MSEC_WAIT = 0;
+static constexpr int VIEW = 200; //visualize every VIEW time steps. FOR REAL TIME SET TO 1
 
 #define DISPLAY_SIMULATION true
 

@@ -39,32 +39,40 @@ bool TParticle::Evolve() {
   switch (mob) {
     case MobState::FREE: {
 
-      TryActivateAB();
+        TryActivateAB();
+        ClearParticlePosition();
 
-      ClearParticlePosition();
-      FreeMove();
+        if(FreeMove()) {
 
-      for (int i : Lattice->GetSiteIndexes(CSite)) {
-        if (i != Index) {
-          if (CheckJoinWithCSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
+            for (int i : Lattice->GetSiteIndexes(CSite)) {
+                if (i != Index) {
+                    if (CheckJoinWithCSite(Lattice->GetParticle(i))) {
+                        CheckBorder();
+                        JustJoined = true;
+                    }
+                }
+            }
+
+            for (int i : Lattice->GetSiteIndexes(RSite)) {
+                if (i != Index) {
+                    if (CheckJoinWithRSite(Lattice->GetParticle(i))) {
+                        CheckBorder();
+                        JustJoined = true;
+                    }
+                }
+            }
+
+            for (int i : Lattice->GetSiteIndexes(LSite)) {
+                if (i != Index) {
+                    if (CheckJoinWithLSite(Lattice->GetParticle(i))) {
+                        CheckBorder();
+                        JustJoined = true;
+                    }
+                }
+            }
         }
-      }
-
-      for (int i : Lattice->GetSiteIndexes(RSite)) {
-        if (i != Index) {
-          if (CheckJoinWithRSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
-        }
-      }
-
-      for (int i : Lattice->GetSiteIndexes(LSite)) {
-        if (i != Index) {
-          if (CheckJoinWithLSite(Lattice->GetParticle(i))) {CheckBorder(); JustJoined = true;}
-        }
-      }
-
-      SetParticlePosition();
-
-      break;
+        SetParticlePosition();
+        break;
     }
 
     case MobState::LINKED: {
@@ -86,11 +94,16 @@ void TParticle::TryActivateAB() {
   }
 }
 
-void TParticle::FreeMove() {
-  // Transalte CSite in one of the 6 neighbours Sites chosen randomly
+bool TParticle::FreeMove() {
+
+  // Transalte CSite in one of the 6 neighbours Sites chosen randomly. Before check if there is the aggregate
   if (ranMT() < TRANSL_RATE) {
 
     int tr = randM(6);
+    //if (CheckAggregate(TSite(CSite.x + dx[tr],CSite.y + dy[tr]))) return false;
+    //if (CheckAggregate(TSite(LSite.x + dx[tr],LSite.y + dy[tr]))) return false;
+    //if (CheckAggregate(TSite(RSite.x + dx[tr],RSite.y + dy[tr]))) return false;
+
     CSite.Translate(dx[tr], dy[tr]);
     // and by consequence LSite and RSite by the same dx and dy
     LSite.Translate(dx[tr], dy[tr]);
@@ -110,6 +123,8 @@ void TParticle::FreeMove() {
     RecalcExtSites();
     //remember that if A and B activation is't simultaneous is_activeA and is_activeB must swap
   }
+
+  return true;
 }
 
 void TParticle::RandomizePosition() {
@@ -441,7 +456,7 @@ void TParticle::ClearParticlePosition() {
 std::ostream &operator<<(std::ostream &os, const TParticle::MobState &me) {
   switch (me) {
     case TParticle::MobState::FREE:return os << "Free";
-    case TParticle::MobState::LINKED :return os << "YLA";
+    case TParticle::MobState::LINKED :return os << "Linked";
     case TParticle::MobState::BLOCKED:return os << "Blocked";
   }
   return os;
@@ -457,3 +472,11 @@ std::ostream &operator<<(std::ostream &os, const TParticle &me) {
 void TParticle::CheckBorder() {
  if (CSite.x < 2 || CSite.x > (Lx- 3) || CSite.y < 1 || CSite.y > (Ly-2) ) Lattice->OutofGrid=true;
 }
+
+
+bool TParticle::CheckAggregate(TSite pSite) {
+    if ((Lattice->GetSiteIndexes(pSite)).empty()) {return false;}
+    return true;
+}
+
+

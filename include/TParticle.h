@@ -79,8 +79,8 @@ private:
   void RandomizeOrientation();
   //! Set the RSite & LSite
   void RecalcExtSites();
-  //! Movement of a FREE particle
-  void FreeMove();
+  //! Movement of a FREE particle. If not meet the aggregates, moves free
+  bool FreeMove();
 
   //! Try to activate central sites A & B;
   void TryActivateAB();
@@ -107,6 +107,8 @@ private:
 
   //! Check if a new added monomer in the aggregate is on the border
   void CheckBorder();
+
+  bool CheckAggregate(TSite pSite);
 };
 
 #endif // TPARTICLE_H
