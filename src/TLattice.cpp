@@ -100,6 +100,7 @@ void TLattice::draw(sf::RenderTarget &target, sf::RenderStates states) const {
                                   sf::Vertex(sf::Vector2f(i.RSite.x, i.RSite.y))};
           target.draw(monomer, 2, sf::Lines, states);
       }
+    // Uncommento to draw also free monomers
     else {
         sf::Vertex monomerCM=sf::Vertex(sf::Vector2f(i.CSite.x,i.CSite.y), sf::Color::White);
         target.draw(&monomerCM,1,sf::Points);
