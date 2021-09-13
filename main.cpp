@@ -20,7 +20,7 @@ static int N_PART = 50000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 200000;
+static constexpr int T_MAX = 220000;
 static constexpr int N_FIX_MAX = 10000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 500; //visualize every VIEW time steps. FOR REAL TIME SET TO 1

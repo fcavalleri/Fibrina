@@ -44,7 +44,7 @@ public:
 
   //! The Lattice is composed by Grid Elements made up with an int (the Index of the Particle if present) and the bool Is_Central
   //typedef mtx::small_vector<uint16_t> GridElement; // type def
-  typedef mtx::small_uint_set<uint16_t,10> GridElement;
+  typedef mtx::small_uint_set<uint16_t,20> GridElement;
 
   //Class Setter ang Getter Methods
   //! Put pIndex of the Index-Particle in the pSite.x and pSite.y position of the Lattice
