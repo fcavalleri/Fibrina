@@ -10,8 +10,8 @@ TParticle::TParticle(int pIndex)
   RandomizePosition();
   RandomizeOrientation();
 
-  is_activeA = true;
-  is_activeB = true;
+  is_activeA = false;
+  is_activeB = false;
 
   mob = MobState::FREE;
   /*LinkedWith[0] = -1;
@@ -36,10 +36,11 @@ bool TParticle::Evolve() {
 
   bool JustJoined = false;
 
+  TryActivateAB();
+
   switch (mob) {
     case MobState::FREE: {
 
-        TryActivateAB();
         ClearParticlePosition();
 
         if(FreeMove()) {
@@ -76,8 +77,7 @@ bool TParticle::Evolve() {
     }
 
     case MobState::LINKED: {
-      if (LinkedWith[1] == -1 && LinkedWith[2] == -1) TryActivateAB();
-      if(CheckClose()) CheckBorder();
+        if(CheckClose()) CheckBorder();
       break;
     }
 
@@ -88,7 +88,10 @@ bool TParticle::Evolve() {
 }
 
 void TParticle::TryActivateAB() {
-  if (ranMT() > ACT_TRESH) {
+    if (is_activeA || is_activeB) return;   // se i siti sono già stati attivati non procedo.
+    if (LinkedWith[1]!=-1 || LinkedWith[2]!=-1) return;   // se almeno un sito è già coinvolto in un legame, non procedo.
+
+  if (ranMT() < ACT_TRESH) {
     is_activeA = true;
     is_activeB = true;
   }
@@ -256,9 +259,9 @@ void TParticle::DLAs(TParticle &other) {
   mob = MobState::BLOCKED;
   other.mob = MobState::BLOCKED;
   LinkedWith[2] = other.Index;
-  other.LinkedWith[3] = Index;
   LinkedWith[3] = other.Index;
   other.LinkedWith[2] = Index;
+  other.LinkedWith[3] = Index;
   is_activeA = false;
   is_freeR = false;
   other.is_freeR = false;
@@ -270,9 +273,9 @@ void TParticle::DLBs(TParticle &other) {
   mob = MobState::BLOCKED;
   other.mob = MobState::BLOCKED;
   LinkedWith[0] = other.Index;
-  other.LinkedWith[1] = Index;
   LinkedWith[1] = other.Index;
   other.LinkedWith[0] = Index;
+  other.LinkedWith[1] = Index;
   is_activeB = false;
   is_freeL = false;
   other.is_freeL = false;
@@ -322,16 +325,16 @@ void TParticle::YLR(TParticle &other) {
 
 bool TParticle::CheckClose() {
     bool Closed= false;
-  if (!is_freeL) {
+  if (LinkedWith[0]!=-1) {
     if (CheckCloseYLL(Lattice->GetParticle(LinkedWith[0]))) Closed=true;
   }
-  if (!is_activeB) {
+  if (LinkedWith[1]!=-1) {
     if (CheckCloseYLB(Lattice->GetParticle(LinkedWith[1]))) Closed=true;
   }
-  if (!is_activeA) {
+  if (LinkedWith[2]!=-1) {
     if (CheckCloseYLA(Lattice->GetParticle(LinkedWith[2]))) Closed=true;
   }
-  if (!is_freeR) {
+  if (LinkedWith[3]!=-1) {
     if (CheckCloseYLR(Lattice->GetParticle(LinkedWith[3]))) Closed=true;
   }
   return Closed;
