@@ -1,19 +1,21 @@
 #/bin/bash
 echo Closing_threshold: 
 read clo_thres
+echo Activation_Threshold:
+read act_thres
 echo Initial_Particle_Number: 
 read n_part
 echo Iterazioni:
 read max
 mkdir NewResults
 cd NewResults
-mkdir 'N_'$n_part'_cl_'$clo_thres
-cd 'N_'$n_part'_cl_'$clo_thres
+mkdir 'N_'$n_part'_cl_'$clo_thres'_act_'$act_thres
+cd 'N_'$n_part'_cl_'$clo_thres'_act_'$act_thres
 
 #for run in $(seq -f "%04g" 1 $max) ; do ./main $label'_'$run ; done
 
 ulimit -s unlimited;
-for run in $(seq -f "%04g" 1 $max) ; do ../../cmake-build-debug/main $clo_thres $n_part $run ; done
+for run in $(seq -f "%04g" 1 $max) ; do ../../cmake-build-debug/main $clo_thres $n_part $run $act_thres ; done
 
 mkdir RawData
 mkdir FinalCoord
