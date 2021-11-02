@@ -16,7 +16,7 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static int N_PART = 200;
+static int N_PART = 300;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.3;
 
 static double ACT_TRESH = 1; //0.0012;
-static double CLO_TRESH = 0.4;
+static double CLO_TRESH = 0.6;
 static constexpr double DL2YL_RATE = 0;
 
 }
