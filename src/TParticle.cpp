@@ -47,27 +47,33 @@ bool TParticle::Evolve() {
 
             for (int i : Lattice->GetSiteIndexes(CSite)) {
                 if (i != Index) {
-                    if (CheckJoinWithCSite(Lattice->GetParticle(i))) {
-                        CheckBorder();
-                        JustJoined = true;
+                    if (ranMT()<0.01){
+                        if (CheckJoinWithCSite(Lattice->GetParticle(i))) {
+                            CheckBorder();
+                            JustJoined = true;
+                        }
                     }
                 }
             }
 
             for (int i : Lattice->GetSiteIndexes(RSite)) {
                 if (i != Index) {
-                    if (CheckJoinWithRSite(Lattice->GetParticle(i))) {
-                        CheckBorder();
-                        JustJoined = true;
+                    if (ranMT()<0.01){
+                        if (CheckJoinWithRSite(Lattice->GetParticle(i))) {
+                            CheckBorder();
+                            JustJoined = true;
+                        }
                     }
                 }
             }
 
             for (int i : Lattice->GetSiteIndexes(LSite)) {
                 if (i != Index) {
-                    if (CheckJoinWithLSite(Lattice->GetParticle(i))) {
-                        CheckBorder();
-                        JustJoined = true;
+                    if (ranMT()<0.01){
+                        if (CheckJoinWithLSite(Lattice->GetParticle(i))) {
+                            CheckBorder();
+                            JustJoined = true;
+                        }
                     }
                 }
             }
