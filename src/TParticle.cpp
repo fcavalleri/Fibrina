@@ -47,7 +47,7 @@ bool TParticle::Evolve() {
 
             for (int i : Lattice->GetSiteIndexes(CSite)) {
                 if (i != Index) {
-                    if (ranMT()<0.1){
+                    if (ranMT()<0.25){
                         if (CheckJoinWithCSite(Lattice->GetParticle(i))) {
                             CheckBorder();
                             JustJoined = true;
@@ -58,7 +58,7 @@ bool TParticle::Evolve() {
 
             for (int i : Lattice->GetSiteIndexes(RSite)) {
                 if (i != Index) {
-                    if (ranMT()<0.1){
+                    if (ranMT()<0.25){
                         if (CheckJoinWithRSite(Lattice->GetParticle(i))) {
                             CheckBorder();
                             JustJoined = true;
@@ -69,7 +69,7 @@ bool TParticle::Evolve() {
 
             for (int i : Lattice->GetSiteIndexes(LSite)) {
                 if (i != Index) {
-                    if (ranMT()<0.1){
+                    if (ranMT()<0.25){
                         if (CheckJoinWithLSite(Lattice->GetParticle(i))) {
                             CheckBorder();
                             JustJoined = true;

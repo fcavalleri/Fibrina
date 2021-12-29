@@ -20,7 +20,7 @@ static int N_PART = 1000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 500000;
+static constexpr int T_MAX = 100000;
 static constexpr int N_FIX_MAX = 20000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 10000; //visualize (and save) every VIEW time steps. FOR REAL TIME SET TO 1
@@ -34,7 +34,7 @@ static constexpr double TRANSL_RATE = 0.9;
 static constexpr double LEN_WIDHT_RATIO = 0.3;
 
 static double ACT_TRESH = 1;
-static double CLO_TRESH = 0.006;
+static double CLO_TRESH = 0.6/4;
 static constexpr double DL2YL_RATE = 0;
 
 }
@@ -129,20 +129,14 @@ int main(int argc, char*argv[]) {
   outputYLDL <<"Time\tnYl\tnDS\n";
 
 // Time Evolution
+int StepsExecuted=0;
+
   for (int t : tq::trange(T_MAX)) {
 
     // Ask the Lattice to Evolve all the System by a time step
-    if (Lattice.Evolve()) {
-        outputP << "Total time of simulation: " << t * 0.00001 << " s (" << t << " steps) \n" <<
-                "Number of monomers in the aggregate: " << Lattice.Nfix;
-
-        for (auto i : Lattice.Parts) {
-            if (i.mob != TParticle::MobState::FREE) {
-                finoutput << i.CSite << "\t" << i.LSite << "\t" << i.RSite << "\t" << i.Spin << std::endl;
-            }
-        }
-
-        return 0;
+    if (!Lattice.Evolve()) {
+        StepsExecuted = t;
+        break;
     }
 
     //Visualize Lattice every VIEW steps
@@ -178,6 +172,9 @@ int main(int argc, char*argv[]) {
 
     }
   }
+
+  if (StepsExecuted==0) StepsExecuted=T_MAX;
+
 #if DISPLAY_SIMULATION
   while (app.isOpen()) {
     for (sf::Event event; app.pollEvent(event);) {
@@ -192,7 +189,7 @@ int main(int argc, char*argv[]) {
   }
 #endif
 
-  outputP << "Total time of simulation: " << T_MAX * 0.00001 << " s (" << T_MAX << " steps) \n" <<
+  outputP << "Total time of simulation: " << StepsExecuted * 0.00001 << " s (" << StepsExecuted << " steps) \n" <<
   "Number of monomers in the aggregate: " << Lattice.Nfix;
 
     for (auto i : Lattice.Parts) {
