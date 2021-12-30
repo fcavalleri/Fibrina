@@ -71,6 +71,8 @@ private:
   static constexpr int dy[6] = {0, 1, 1, 0, -1, -1};
   //! Possibility of a planar rotation (clockwise or anticlockwise)
   static constexpr int R[2] = {-1, 1};
+  //! Inhibition factor
+  static constexpr double Inh = 0.25;
 
   //Class Internal Methods
   //! Give random position at the CSite of the monomer

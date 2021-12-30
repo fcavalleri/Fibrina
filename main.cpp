@@ -16,12 +16,12 @@ const std::string currentDateTime();
 namespace parameters {
 // Define system parameters
 
-static int N_PART = 1000;
+static int N_PART = 3000;
 static constexpr int GRID_LEN_X = TSite::Lx;
 static constexpr int GRID_LEN_Y = TSite::Ly;
 
-static constexpr int T_MAX = 100000;
-static constexpr int N_FIX_MAX = 20000;
+static constexpr int T_MAX = 400000;
+static constexpr int N_FIX_MAX = 18000;
 static constexpr int MSEC_WAIT = 0;
 static constexpr int VIEW = 10000; //visualize (and save) every VIEW time steps. FOR REAL TIME SET TO 1
 
@@ -75,6 +75,7 @@ int main(int argc, char*argv[]) {
     "Initial number of particles: " << N_PART << "\n" <<
     "Initial free monomer concentration: " << N_PART / (GRID_LEN_X * 0.25 * 45 * 0.001 * GRID_LEN_Y * 0.25 * sqrt(3) * 45 * 0.001) << " N/um^2\n" <<
     "Reinjection every link event to keep constant free particles concentration: FALSE \n" <<
+    "Inhibition factor: 0.25 \n" <<
     "\nParticles parameters" << "\n\n" <<
     "Translational Diffusion Rate: " << TRANSL_RATE << "\n" <<
     "ZY Rotational Diffusion Rate: " << ZY_ROT_RATE << "\n" <<

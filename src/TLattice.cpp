@@ -69,7 +69,7 @@ bool TLattice::Evolve() {
 
 void TLattice::SetSitePosition(TSite &pSite, int pIndex) {
   //Gives at the int element of the Grid struct the value pIndex
-  Grid[pSite.x][pSite.y].insert_safe(pIndex);
+  Grid[pSite.x][pSite.y].insert(pIndex);
   //Gives at the bool element of the Grid struct the value is_central given by pSite
   //Grid[pSite.x*L+pSite.y].is_central=pSite.is_central;
 }
